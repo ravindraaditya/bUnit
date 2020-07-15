@@ -1,0 +1,649 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class RenderedFragment
+   | bUnit </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class RenderedFragment
+   | bUnit ">
+    <meta name="generator" content="docfx 2.53.1.0">
+    <meta name="description" content="bUnit is a unit testing library for Blazor Components. You can easily define components under test in C# or Razor syntax and verify outcome using semantic HTML diffing/comparison logic. You can interact with and inspect components, trigger event handlers, provide cascading values, inject services, mock IJsRuntime, and perform snapshot testing.">
+    <!--<link rel="shortcut icon" href="../favicon.ico">-->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img height="60%" id="logo" class="img" src="..//images/blazor-logo.png" alt="bUnit">
+                <span>bUnit</span>
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Bunit.Rendering.RenderedFragment">
+  
+  
+  <h1 id="Bunit_Rendering_RenderedFragment" data-uid="Bunit.Rendering.RenderedFragment" class="text-break">Class RenderedFragment
+  </h1>
+  <div class="markdown level0 summary"><p>Represents an abstract <a class="xref" href="Bunit.IRenderedFragment.html">IRenderedFragment</a> with base functionality.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">RenderedFragment</span></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="Bunit.IRenderedFragment.html">IRenderedFragment</a></div>
+    <div><a class="xref" href="Bunit.IRenderedFragmentBase.html">IRenderedFragmentBase</a></div>
+    <div><a class="xref" href="Bunit.Rendering.IRenderEventHandler.html">IRenderEventHandler</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Bunit.Rendering.html">Bunit.Rendering</a></h6>
+  <h6><strong>Assembly</strong>: Bunit.Web.dll</h6>
+  <h5 id="Bunit_Rendering_RenderedFragment_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class RenderedFragment : IRenderedFragment, IRenderedFragmentBase, IRenderEventHandler</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/egil/bUnit/new/main/apiSpec/new?filename=Bunit_Rendering_RenderedFragment__ctor_System_IServiceProvider_System_Int32_.md&amp;value=---%0Auid%3A%20Bunit.Rendering.RenderedFragment.%23ctor(System.IServiceProvider%2CSystem.Int32)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/egil/bUnit/blob/main/src/bunit.web/Rendering/RenderedFragment.cs/#L89">View Source</a>
+  </span>
+  <a id="Bunit_Rendering_RenderedFragment__ctor_" data-uid="Bunit.Rendering.RenderedFragment.#ctor*"></a>
+  <h4 id="Bunit_Rendering_RenderedFragment__ctor_System_IServiceProvider_System_Int32_" data-uid="Bunit.Rendering.RenderedFragment.#ctor(System.IServiceProvider,System.Int32)">RenderedFragment(IServiceProvider, Int32)</h4>
+  <div class="markdown level1 summary"><p>Creates an instance of the <a class="xref" href="Bunit.Rendering.RenderedFragment.html">RenderedFragment</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public RenderedFragment(IServiceProvider services, int componentId)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.IServiceProvider</span></td>
+        <td><span class="parametername">services</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">componentId</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/egil/bUnit/new/main/apiSpec/new?filename=Bunit_Rendering_RenderedFragment_ComponentId.md&amp;value=---%0Auid%3A%20Bunit.Rendering.RenderedFragment.ComponentId%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/egil/bUnit/blob/main/src/bunit.web/Rendering/RenderedFragment.cs/#L46">View Source</a>
+  </span>
+  <a id="Bunit_Rendering_RenderedFragment_ComponentId_" data-uid="Bunit.Rendering.RenderedFragment.ComponentId*"></a>
+  <h4 id="Bunit_Rendering_RenderedFragment_ComponentId" data-uid="Bunit.Rendering.RenderedFragment.ComponentId">ComponentId</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int ComponentId { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/egil/bUnit/new/main/apiSpec/new?filename=Bunit_Rendering_RenderedFragment_FirstRenderMarkup.md&amp;value=---%0Auid%3A%20Bunit.Rendering.RenderedFragment.FirstRenderMarkup%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/egil/bUnit/blob/main/src/bunit.web/Rendering/RenderedFragment.cs/#L40">View Source</a>
+  </span>
+  <a id="Bunit_Rendering_RenderedFragment_FirstRenderMarkup_" data-uid="Bunit.Rendering.RenderedFragment.FirstRenderMarkup*"></a>
+  <h4 id="Bunit_Rendering_RenderedFragment_FirstRenderMarkup" data-uid="Bunit.Rendering.RenderedFragment.FirstRenderMarkup">FirstRenderMarkup</h4>
+  <div class="markdown level1 summary"><p>Gets the first rendered markup.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected string FirstRenderMarkup { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/egil/bUnit/new/main/apiSpec/new?filename=Bunit_Rendering_RenderedFragment_Markup.md&amp;value=---%0Auid%3A%20Bunit.Rendering.RenderedFragment.Markup%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/egil/bUnit/blob/main/src/bunit.web/Rendering/RenderedFragment.cs/#L49">View Source</a>
+  </span>
+  <a id="Bunit_Rendering_RenderedFragment_Markup_" data-uid="Bunit.Rendering.RenderedFragment.Markup*"></a>
+  <h4 id="Bunit_Rendering_RenderedFragment_Markup" data-uid="Bunit.Rendering.RenderedFragment.Markup">Markup</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Markup { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/egil/bUnit/new/main/apiSpec/new?filename=Bunit_Rendering_RenderedFragment_Nodes.md&amp;value=---%0Auid%3A%20Bunit.Rendering.RenderedFragment.Nodes%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/egil/bUnit/blob/main/src/bunit.web/Rendering/RenderedFragment.cs/#L63">View Source</a>
+  </span>
+  <a id="Bunit_Rendering_RenderedFragment_Nodes_" data-uid="Bunit.Rendering.RenderedFragment.Nodes*"></a>
+  <h4 id="Bunit_Rendering_RenderedFragment_Nodes" data-uid="Bunit.Rendering.RenderedFragment.Nodes">Nodes</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public INodeList Nodes { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">AngleSharp.Dom.INodeList</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/egil/bUnit/new/main/apiSpec/new?filename=Bunit_Rendering_RenderedFragment_RenderCount.md&amp;value=---%0Auid%3A%20Bunit.Rendering.RenderedFragment.RenderCount%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/egil/bUnit/blob/main/src/bunit.web/Rendering/RenderedFragment.cs/#L84">View Source</a>
+  </span>
+  <a id="Bunit_Rendering_RenderedFragment_RenderCount_" data-uid="Bunit.Rendering.RenderedFragment.RenderCount*"></a>
+  <h4 id="Bunit_Rendering_RenderedFragment_RenderCount" data-uid="Bunit.Rendering.RenderedFragment.RenderCount">RenderCount</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RenderCount { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/egil/bUnit/new/main/apiSpec/new?filename=Bunit_Rendering_RenderedFragment_Renderer.md&amp;value=---%0Auid%3A%20Bunit.Rendering.RenderedFragment.Renderer%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/egil/bUnit/blob/main/src/bunit.web/Rendering/RenderedFragment.cs/#L35">View Source</a>
+  </span>
+  <a id="Bunit_Rendering_RenderedFragment_Renderer_" data-uid="Bunit.Rendering.RenderedFragment.Renderer*"></a>
+  <h4 id="Bunit_Rendering_RenderedFragment_Renderer" data-uid="Bunit.Rendering.RenderedFragment.Renderer">Renderer</h4>
+  <div class="markdown level1 summary"><p>Gets the renderer used to render the <a class="xref" href="Bunit.IRenderedFragmentBase.html">IRenderedFragmentBase</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected ITestRenderer Renderer { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Bunit.Rendering.ITestRenderer.html">ITestRenderer</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/egil/bUnit/new/main/apiSpec/new?filename=Bunit_Rendering_RenderedFragment_Services.md&amp;value=---%0Auid%3A%20Bunit.Rendering.RenderedFragment.Services%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/egil/bUnit/blob/main/src/bunit.web/Rendering/RenderedFragment.cs/#L43">View Source</a>
+  </span>
+  <a id="Bunit_Rendering_RenderedFragment_Services_" data-uid="Bunit.Rendering.RenderedFragment.Services*"></a>
+  <h4 id="Bunit_Rendering_RenderedFragment_Services" data-uid="Bunit.Rendering.RenderedFragment.Services">Services</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IServiceProvider Services { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.IServiceProvider</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/egil/bUnit/new/main/apiSpec/new?filename=Bunit_Rendering_RenderedFragment_GetChangesSinceFirstRender.md&amp;value=---%0Auid%3A%20Bunit.Rendering.RenderedFragment.GetChangesSinceFirstRender%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/egil/bUnit/blob/main/src/bunit.web/Rendering/RenderedFragment.cs/#L125">View Source</a>
+  </span>
+  <a id="Bunit_Rendering_RenderedFragment_GetChangesSinceFirstRender_" data-uid="Bunit.Rendering.RenderedFragment.GetChangesSinceFirstRender*"></a>
+  <h4 id="Bunit_Rendering_RenderedFragment_GetChangesSinceFirstRender" data-uid="Bunit.Rendering.RenderedFragment.GetChangesSinceFirstRender">GetChangesSinceFirstRender()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IReadOnlyList&lt;IDiff&gt; GetChangesSinceFirstRender()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyList</span>&lt;<span class="xref">AngleSharp.Diffing.Core.IDiff</span>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/egil/bUnit/new/main/apiSpec/new?filename=Bunit_Rendering_RenderedFragment_GetChangesSinceSnapshot.md&amp;value=---%0Auid%3A%20Bunit.Rendering.RenderedFragment.GetChangesSinceSnapshot%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/egil/bUnit/blob/main/src/bunit.web/Rendering/RenderedFragment.cs/#L113">View Source</a>
+  </span>
+  <a id="Bunit_Rendering_RenderedFragment_GetChangesSinceSnapshot_" data-uid="Bunit.Rendering.RenderedFragment.GetChangesSinceSnapshot*"></a>
+  <h4 id="Bunit_Rendering_RenderedFragment_GetChangesSinceSnapshot" data-uid="Bunit.Rendering.RenderedFragment.GetChangesSinceSnapshot">GetChangesSinceSnapshot()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IReadOnlyList&lt;IDiff&gt; GetChangesSinceSnapshot()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyList</span>&lt;<span class="xref">AngleSharp.Diffing.Core.IDiff</span>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/egil/bUnit/new/main/apiSpec/new?filename=Bunit_Rendering_RenderedFragment_SaveSnapshot.md&amp;value=---%0Auid%3A%20Bunit.Rendering.RenderedFragment.SaveSnapshot%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/egil/bUnit/blob/main/src/bunit.web/Rendering/RenderedFragment.cs/#L106">View Source</a>
+  </span>
+  <a id="Bunit_Rendering_RenderedFragment_SaveSnapshot_" data-uid="Bunit.Rendering.RenderedFragment.SaveSnapshot*"></a>
+  <h4 id="Bunit_Rendering_RenderedFragment_SaveSnapshot" data-uid="Bunit.Rendering.RenderedFragment.SaveSnapshot">SaveSnapshot()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SaveSnapshot()</code></pre>
+  </div>
+  <h3 id="events">Events
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/egil/bUnit/new/main/apiSpec/new?filename=Bunit_Rendering_RenderedFragment_OnAfterRender.md&amp;value=---%0Auid%3A%20Bunit.Rendering.RenderedFragment.OnAfterRender%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/egil/bUnit/blob/main/src/bunit.web/Rendering/RenderedFragment.cs/#L81">View Source</a>
+  </span>
+  <h4 id="Bunit_Rendering_RenderedFragment_OnAfterRender" data-uid="Bunit.Rendering.RenderedFragment.OnAfterRender">OnAfterRender</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event Action OnAfterRender</code></pre>
+  </div>
+  <h5 class="eventType">Event Type</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Action</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/egil/bUnit/new/main/apiSpec/new?filename=Bunit_Rendering_RenderedFragment_OnMarkupUpdated.md&amp;value=---%0Auid%3A%20Bunit.Rendering.RenderedFragment.OnMarkupUpdated%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/egil/bUnit/blob/main/src/bunit.web/Rendering/RenderedFragment.cs/#L78">View Source</a>
+  </span>
+  <h4 id="Bunit_Rendering_RenderedFragment_OnMarkupUpdated" data-uid="Bunit.Rendering.RenderedFragment.OnMarkupUpdated">OnMarkupUpdated</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event Action OnMarkupUpdated</code></pre>
+  </div>
+  <h5 class="eventType">Event Type</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Action</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="eii">Explicit Interface Implementations
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/egil/bUnit/new/main/apiSpec/new?filename=Bunit_Rendering_RenderedFragment_Bunit_Rendering_IRenderEventHandler_Handle_Bunit_Rendering_RenderEvent_.md&amp;value=---%0Auid%3A%20Bunit.Rendering.RenderedFragment.Bunit%23Rendering%23IRenderEventHandler%23Handle(Bunit.Rendering.RenderEvent)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/egil/bUnit/blob/main/src/bunit.web/Rendering/RenderedFragment.cs/#L134">View Source</a>
+  </span>
+  <a id="Bunit_Rendering_RenderedFragment_Bunit_Rendering_IRenderEventHandler_Handle_" data-uid="Bunit.Rendering.RenderedFragment.Bunit#Rendering#IRenderEventHandler#Handle*"></a>
+  <h4 id="Bunit_Rendering_RenderedFragment_Bunit_Rendering_IRenderEventHandler_Handle_Bunit_Rendering_RenderEvent_" data-uid="Bunit.Rendering.RenderedFragment.Bunit#Rendering#IRenderEventHandler#Handle(Bunit.Rendering.RenderEvent)">IRenderEventHandler.Handle(RenderEvent)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Task IRenderEventHandler.Handle(RenderEvent renderEvent)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Bunit.Rendering.RenderEvent.html">RenderEvent</a></td>
+        <td><span class="parametername">renderEvent</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="Bunit.IRenderedFragment.html">IRenderedFragment</a>
+  </div>
+  <div>
+      <a class="xref" href="Bunit.IRenderedFragmentBase.html">IRenderedFragmentBase</a>
+  </div>
+  <div>
+      <a class="xref" href="Bunit.Rendering.IRenderEventHandler.html">IRenderEventHandler</a>
+  </div>
+  <h3 id="extensionmethods">Extension Methods</h3>
+  <div>
+      <a class="xref" href="Bunit.CompareToExtensions.html#Bunit_CompareToExtensions_CompareTo_Bunit_IRenderedFragment_System_String_">CompareToExtensions.CompareTo(IRenderedFragment, String)</a>
+  </div>
+  <div>
+      <a class="xref" href="Bunit.CompareToExtensions.html#Bunit_CompareToExtensions_CompareTo_Bunit_IRenderedFragment_Bunit_IRenderedFragment_">CompareToExtensions.CompareTo(IRenderedFragment, IRenderedFragment)</a>
+  </div>
+  <div>
+      <a class="xref" href="Bunit.MarkupMatchesAssertExtensions.html#Bunit_MarkupMatchesAssertExtensions_MarkupMatches_Bunit_IRenderedFragment_System_String_System_String_">MarkupMatchesAssertExtensions.MarkupMatches(IRenderedFragment, String, String)</a>
+  </div>
+  <div>
+      <a class="xref" href="Bunit.MarkupMatchesAssertExtensions.html#Bunit_MarkupMatchesAssertExtensions_MarkupMatches_Bunit_IRenderedFragment_Bunit_IRenderedFragment_System_String_">MarkupMatchesAssertExtensions.MarkupMatches(IRenderedFragment, IRenderedFragment, String)</a>
+  </div>
+  <div>
+      <a class="xref" href="Bunit.RenderedFragmentExtensions.html#Bunit_RenderedFragmentExtensions_Find_Bunit_IRenderedFragment_System_String_">RenderedFragmentExtensions.Find(IRenderedFragment, String)</a>
+  </div>
+  <div>
+      <a class="xref" href="Bunit.RenderedFragmentExtensions.html#Bunit_RenderedFragmentExtensions_FindAll_Bunit_IRenderedFragment_System_String_System_Boolean_">RenderedFragmentExtensions.FindAll(IRenderedFragment, String, Boolean)</a>
+  </div>
+  <div>
+      <a class="xref" href="Bunit.RenderedFragmentExtensions.html#Bunit_RenderedFragmentExtensions_FindComponent__1_Bunit_IRenderedFragment_">RenderedFragmentExtensions.FindComponent&lt;TComponent&gt;(IRenderedFragment)</a>
+  </div>
+  <div>
+      <a class="xref" href="Bunit.RenderedFragmentExtensions.html#Bunit_RenderedFragmentExtensions_FindComponents__1_Bunit_IRenderedFragment_">RenderedFragmentExtensions.FindComponents&lt;TComponent&gt;(IRenderedFragment)</a>
+  </div>
+  <div>
+      <a class="xref" href="Bunit.TestDoubles.JSInterop.JSRuntimeAssertExtensions.html#Bunit_TestDoubles_JSInterop_JSRuntimeAssertExtensions_ShouldBeElementReferenceTo_System_Object_AngleSharp_Dom_IElement_">JSRuntimeAssertExtensions.ShouldBeElementReferenceTo(Object, IElement)</a>
+  </div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/egil/bUnit/new/main/apiSpec/new?filename=Bunit_Rendering_RenderedFragment.md&amp;value=---%0Auid%3A%20Bunit.Rendering.RenderedFragment%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/egil/bUnit/blob/main/src/bunit.web/Rendering/RenderedFragment.cs/#L20" class="contribution-link">View Source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            <small>Documentation updated on 7/15/2020 10:04:21 AM +00:00 in commit acbc0e07cf</small>.
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/cshtml-razor.js"></script>
+    <script>
+      hljs.registerLanguage('cshtml-razor', window.hljsDefineCshtmlRazor);
+    </script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

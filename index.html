@@ -1,0 +1,225 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>bUnit - a testing library for Blazor components | bUnit </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="bUnit - a testing library for Blazor components | bUnit ">
+    <meta name="generator" content="docfx 2.53.1.0">
+    <meta name="description" content="bUnit is a unit testing library for Blazor Components. You can easily define components under test in C# or Razor syntax and verify outcome using semantic HTML diffing/comparison logic. You can interact with and inspect components, trigger event handlers, provide cascading values, inject services, mock IJsRuntime, and perform snapshot testing.">
+    <!--<link rel="shortcut icon" href="favicon.ico">-->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="stylesheet" href="styles/docfx.vendor.css">
+    <link rel="stylesheet" href="styles/docfx.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <meta property="docfx:navrel" content="toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="index.html">
+                <img height="60%" id="logo" class="img" src="/images/blazor-logo.png" alt="bUnit">
+                <span>bUnit</span>
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        <div class="article row grid">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="home">
+
+
+<p><a href="https://github.com/egil/bunit/actions?query=workflow%3ARELEASE"><img src="https://img.shields.io/github/workflow/status/egil/bunit/RELEASE?logo=github&amp;style=flat-square" alt="GitHub Workflow Status"></a>
+<a href="https://github.com/egil/bunit/releases"><img src="https://img.shields.io/github/v/tag/egil/bunit?include_prereleases&amp;logo=github&amp;style=flat-square" alt="GitHub tag (latest SemVer pre-release)"></a>
+<a href="https://www.nuget.org/packages/bunit/"><img src="https://img.shields.io/nuget/dt/bunit?logo=nuget&amp;style=flat-square" alt="Nuget"></a>
+<a href="https://github.com/egil/bunit/issues"><img src="https://img.shields.io/github/issues/egil/bunit.svg?style=flat-square&amp;logo=github" alt="Issues Open"></a>
+<a href="https://gitter.im/egil/bunit?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge"><img src="https://img.shields.io/gitter/room/egil/bunit?logo=gitter&amp;style=flat-square" alt="Gitter"></a></p>
+<h1 id="bunit---a-testing-library-for-blazor-components">bUnit - a testing library for Blazor components</h1>
+<p><strong>bUnit</strong> is a testing library for Blazor Components. Its goal is to make it easy to write <em>comprehensive, stable unit tests</em>. You can:</p>
+<ul>
+<li>Setup and define components under tests in C# or Razor syntax</li>
+<li>Verify outcome using semantic HTML comparer</li>
+<li>Interact with and inspect components</li>
+<li>Trigger event handlers</li>
+<li>Provide cascading values</li>
+<li>Inject services</li>
+<li>Mock <code>IJsRuntime</code></li>
+<li>Perform snapshot testing</li>
+</ul>
+<p>bUnit builds on top of existing unit testing frameworks such as xUnit, NUnit, and MSTest, which runs the Blazor components tests, just as any normal unit test.</p>
+<p><strong>Go to the <a class="xref" href="docs/getting-started/index.html">Documentation</a> pages to learn more.</strong></p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>The documentation is currently being rewritten to reflect the recent changes.
+Please excuse the mess.</p>
+</div>
+<h3 id="test-example">Test example</h3>
+<p>For example, to test the <code>&lt;Counter&gt;</code> component listed below:</p>
+<pre><code class="lang-html" name="Counter.razor">&lt;h1&gt;Counter&lt;/h1&gt;
+
+&lt;p&gt;
+    Current count: @currentCount
+&lt;/p&gt;
+
+&lt;button class=&quot;btn btn-primary&quot; @onclick=&quot;IncrementCount&quot;&gt;Click me&lt;/button&gt;
+
+@code {
+  int currentCount = 0;
+
+  void IncrementCount()
+  {
+    currentCount++;
+  }
+}
+</code></pre>
+<p>You can do the following, using bUnit and xUnit:</p>
+<pre><code class="lang-csharp" name="CounterTest.cs">[Fact]
+public void CounterShouldIncrementWhenClicked()
+{
+  // Arrange: render the Counter.razor component
+  var cut = RenderComponent&lt;Counter&gt;();
+
+  // Act: find and click the &lt;button&gt; element to increment
+  // the counter in the &lt;p&gt; element
+  cut.Find(&quot;button&quot;).Click();
+
+  // Assert: first find the &lt;p&gt; element, then verify its content
+  cut.Find(&quot;p&quot;).MarkupMatches(&quot;&lt;p&gt;Current count: 1&lt;/p&gt;&quot;);
+}
+</code></pre><h3 id="nuget-downloads">NuGet downloads</h3>
+<p>bUnit is available on NuGet in various incarnations. If you are using xUnit as your general purpose testing framework, you can use <code>bunit</code>, which includes everything in one package. If you want to use NUnit or MStest, then pick <code>bunit.core</code> and <code>bunit.web</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>NuGet Download Link</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>bUnit</td>
+<td>Library, includes core, web, and xUnit</td>
+<td><a href="https://www.nuget.org/packages/bunit/"><img src="https://img.shields.io/nuget/dt/bunit?logo=nuget&amp;style=flat-square" alt="Nuget"></a></td>
+</tr>
+<tr>
+<td>bUnit.core</td>
+<td>Library, only core</td>
+<td><a href="https://www.nuget.org/packages/bunit.core/"><img src="https://img.shields.io/nuget/dt/bunit.core?logo=nuget&amp;style=flat-square" alt="Nuget"></a></td>
+</tr>
+<tr>
+<td>bUnit.web</td>
+<td>Library, web and core</td>
+<td><a href="https://www.nuget.org/packages/bunit.web/"><img src="https://img.shields.io/nuget/dt/bunit.web?logo=nuget&amp;style=flat-square" alt="Nuget"></a></td>
+</tr>
+<tr>
+<td>bUnit.xUnit</td>
+<td>Library, xUnit and core</td>
+<td><a href="https://www.nuget.org/packages/bunit.xunit/"><img src="https://img.shields.io/nuget/dt/bunit.xunit?logo=nuget&amp;style=flat-square" alt="Nuget"></a></td>
+</tr>
+<tr>
+<td>bUnit.template</td>
+<td>Template, which currently creates an xUnit based bUnit test projects only</td>
+<td><a href="https://www.nuget.org/packages/bunit.template/"><img src="https://img.shields.io/nuget/dt/bunit.template?logo=nuget&amp;style=flat-square" alt="Nuget"></a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="milestones-to-v100">Milestones to v1.0.0</h2>
+<p>These are the current goals that should be reached before v1.0.0 is ready:</p>
+<ul>
+<li><strong>Stabilize the APIs</strong>, such that they work equally well with both xUnit, NUnit, and MSTest as the underlying test framework. The general goals is to make it easy and obvious for developers to create the tests they needed, and fall into the pit of success.</li>
+<li><strong>Get the Razor-based testing to stable</strong>, e.g. make the discovery and running of tests defined in .razor files stable and efficient. This includes adding support for NUnit and MSTest as test runners.</li>
+<li><strong>Join the .NET Foundation.</strong>. This project is too large for one person to be the owner and be the sole maintainer of, so the plan is to apply for membership as soon as possible, most likely close to or after v1.0.0 ships, and get the needed support and guidance to ensure the project long term.</li>
+</ul>
+<p>In the post v1.0.0 to v1.0.x time frame, focus will be on improving performance. Especially the spin-up time of about one second would be nice to get reduced.</p>
+<h2 id="contributors">Contributors</h2>
+<p>Shout outs and a big thank you <a href="https://github.com/egil/bunit/graphs/contributors">to all the contributors</a> to the library, both those that raise issues, provide input to issues, and those who send pull requests.</p>
+<p><strong>Want to help out? You can help in a number of ways:</strong></p>
+<ul>
+<li>Provide feedback and input through <a href="https://github.com/egil/bunit/issues">issues</a>, <a href="https://twitter.com/egilhansen">Twitter</a> or <a href="https://gitter.im/egil/bunit">bUnit Gitter chat room</a>.</li>
+<li>Help build the library, just pick an issue and submit pull-requests.</li>
+<li>Help write documentation.</li>
+<li>Create blog posts, presentations or video tutorials. If you do, I will be happy to showcase them in the <a class="xref" href="docs/external-resources.html">related section</a> on this site.</li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/egil/bUnit/blob/main/docs/site/index.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            <small>Documentation updated on 7/15/2020 10:04:21 AM +00:00 in commit acbc0e07cf</small>.
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="styles/cshtml-razor.js"></script>
+    <script>
+      hljs.registerLanguage('cshtml-razor', window.hljsDefineCshtmlRazor);
+    </script>
+    <script type="text/javascript" src="styles/docfx.js"></script>
+    <script type="text/javascript" src="styles/main.js"></script>
+  </body>
+</html>

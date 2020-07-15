@@ -1,0 +1,398 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Writing Tests in C# for Blazor Components | bUnit </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Writing Tests in C# for Blazor Components | bUnit ">
+    <meta name="generator" content="docfx 2.53.1.0">
+    <meta name="description" content="bUnit is a unit testing library for Blazor Components. You can easily define components under test in C# or Razor syntax and verify outcome using semantic HTML diffing/comparison logic. You can interact with and inspect components, trigger event handlers, provide cascading values, inject services, mock IJsRuntime, and perform snapshot testing.">
+    <!--<link rel="shortcut icon" href="../../favicon.ico">-->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="../../toc.html">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    <meta property="docfx:rel" content="../../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img height="60%" id="logo" class="img" src="../..//images/blazor-logo.png" alt="bUnit">
+                <span>bUnit</span>
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="writing-csharp-tests">
+<h1 id="writing-tests-in-c-for-blazor-components">Writing Tests in C# for Blazor Components</h1>
+
+<p>Testing Blazor components is a different from testing regular C# classes: Blazor components are <em>rendered</em>, they have the <em>Blazor component life cycle</em>, during which we can <em>provide input</em> to them and where they <em>produce output</em>.</p>
+<p>Use <strong>bUnit</strong> to render the component you want to test, pass in parameters to it, inject services into it, and access the rendered component instance and the markup it has produced.</p>
+<p>Rendering a component happens through bUnit's <a class="xref" href="../../api/Bunit.TestContext.html">TestContext</a>, and the result of the rendering, a <a class="xref" href="../../api/Bunit.IRenderedComponent-1.html">IRenderedComponent&lt;TComponent&gt;</a>, provides access to the component instance, and the markup produced by the component.</p>
+<h2 id="creating-a-basic-test">Creating a Basic Test</h2>
+<p>This is a simple example, that tests the following <code>&lt;HelloWorld&gt;</code> component:</p>
+<pre><code class="lang-html" name="HelloWorld.razor">&lt;h1&gt;Hello world from Blazor&lt;/h1&gt;
+</code></pre><div class="tabGroup" id="tabgroup_CeZOj-G++Q">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_xunit" role="tab" aria-controls="tabpanel_CeZOj-G++Q_xunit" data-tab="xunit" tabindex="0" aria-selected="true">xUnit</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_nunit" role="tab" aria-controls="tabpanel_CeZOj-G++Q_nunit" data-tab="nunit" tabindex="-1">NUnit</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_mstest" role="tab" aria-controls="tabpanel_CeZOj-G++Q_mstest" data-tab="mstest" tabindex="-1">MSTest</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q_xunit" role="tabpanel" data-tab="xunit">
+<pre><code class="lang-csharp" name="HelloWorldTest.cs">using Xunit;
+using Bunit;
+
+namespace Bunit.Docs.Samples
+{
+  public class HelloWorldTest
+  {
+    [Fact]
+    public void HelloWorldComponentRendersCorrectly()
+    {
+      // Arrange
+      using var ctx = new TestContext();
+
+      // Act
+      var cut = ctx.RenderComponent&lt;HelloWorld&gt;();
+
+      // Assert
+      cut.MarkupMatches(&quot;&lt;h1&gt;Hello world from Blazor&lt;/h1&gt;&quot;);
+    }
+  }
+}
+</code></pre></section>
+<section id="tabpanel_CeZOj-G++Q_nunit" role="tabpanel" data-tab="nunit" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-csharp" name="HelloWorldTest.cs">using Bunit;
+using NUnit.Framework;
+
+namespace Bunit.Docs.Samples
+{
+  public class HelloWorldTest
+  {
+    [Test]
+    public void HelloWorldComponentRendersCorrectly()
+    {
+      // Arrange
+      using var ctx = new Bunit.TestContext();
+
+      // Act
+      var cut = ctx.RenderComponent&lt;HelloWorld&gt;();
+
+      // Assert
+      cut.MarkupMatches(&quot;&lt;h1&gt;Hello world from Blazor&lt;/h1&gt;&quot;);
+    }
+  }
+}
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p><code>TestContext</code> is an ambiguous reference between <code>TestContext</code> and <code>NUnit.Framework.TestContext</code>, so you have to specify the <code>Bunit</code> namespace when referencing <code>TestContext</code> to resolve the ambiguity for the compiler. Alternatively, you can give bUnit's <code>TestContext</code> a different name during import, e.g.: <code>using BunitTestContext = Bunit.TestContext;</code></p>
+</div>
+</section>
+<section id="tabpanel_CeZOj-G++Q_mstest" role="tabpanel" data-tab="mstest" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-csharp" name="HelloWorldTest.cs">using Bunit;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+namespace Bunit.Docs.Samples
+{
+  [TestClass]
+  public class HelloWorldTest
+  {
+    [TestMethod]
+    public void HelloWorldComponentRendersCorrectly()
+    {
+      // Arrange
+      using var ctx = new Bunit.TestContext();
+
+      // Act
+      var cut = ctx.RenderComponent&lt;HelloWorld&gt;();
+
+      // Assert
+      cut.MarkupMatches(&quot;&lt;h1&gt;Hello world from Blazor&lt;/h1&gt;&quot;);
+    }
+  }
+}
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p><code>TestContext</code> is an ambiguous reference between <code>TestContext</code> and <code>Microsoft.VisualStudio.TestTools.UnitTesting.TestContext</code>, so you have to specify the <code>Bunit</code> namespace when referencing <code>TestContext</code> to resolve the ambiguity for the compiler. Alternatively, you can give bUnit's <code>TestContext</code> a different name during import, e.g.:<br>
+<code>using BunitTestContext = Bunit.TestContext;</code></p>
+</div>
+</section>
+</div>
+
+<p>The following happens in the test above:</p>
+<ol>
+<li>New up the disposable <a class="xref" href="../../api/Bunit.TestContext.html">TestContext</a>, and assign it using the <code>using var</code> syntax, to avoid unnecessary indention.</li>
+<li>Render the <code>&lt;HelloWorld&gt;</code> component using <a class="xref" href="../../api/Bunit.TestContext.html">TestContext</a>, which we do through the <a class="xref" href="../../api/Bunit.TestContext.html#Bunit_TestContext_RenderComponent__1_Bunit_Rendering_ComponentParameter___">RenderComponent&lt;TComponent&gt;(ComponentParameter[])</a> method. We will cover passing parameters to components elsewhere.</li>
+<li>Verify the rendered markup from the <code>&lt;HelloWorld&gt;</code> component using the <code>MarkupMatches</code> method, which performs a semantic comparison of the expected markup with the rendered markup.</li>
+</ol>
+<div class="TIP">
+<h5>Tip</h5>
+<p>Learn more about how the semantic HTML/markup comparison in bUnit work, and how to customize it on the <a class="xref" href="../verification/semantic-html-comparison.html">Customizing the Semantic HTML Comparison</a> page.</p>
+</div>
+<div class="TIP">
+<h5>Tip</h5>
+<p>In bUnit tests, we like to use the abbreviation <code>CUT</code>, short for &quot;component under test&quot;, to indicate the component that is being tested. This is inspired by the common testing abbreviation <code>SUT</code>, short for &quot;system under test&quot;.</p>
+</div>
+<h2 id="remove-boilerplate-code-from-tests">Remove Boilerplate Code from Tests</h2>
+<p>We can remove some boilerplate code from each test by making the <a class="xref" href="../../api/Bunit.TestContext.html">TestContext</a> implicitly available to the test class, so we do not have to have <code>using var ctx = new Bunit.TestContext();</code> in every test. This can be done like this:</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-1">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_xunit" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_xunit" data-tab="xunit" tabindex="0" aria-selected="true">xUnit</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_nunit" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_nunit" data-tab="nunit" tabindex="-1">NUnit</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_mstest" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_mstest" data-tab="mstest" tabindex="-1">MSTest</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-1_xunit" role="tabpanel" data-tab="xunit">
+<pre><code class="lang-csharp" name="HelloWorldImplicitContextTest.cs">using Xunit;
+using Bunit;
+
+namespace Bunit.Docs.Samples
+{
+  public class HelloWorldImplicitContextTest : TestContext
+  {
+    [Fact]
+    public void HelloWorldComponentRendersCorrectly()
+    {
+      // Act
+      var cut = RenderComponent&lt;HelloWorld&gt;();
+
+      // Assert
+      cut.MarkupMatches(&quot;&lt;h1&gt;Hello world from Blazor&lt;/h1&gt;&quot;);
+    }
+  }
+}
+</code></pre>
+<p>Since xUnit instantiates test classes for each execution of test methods inside them and disposes them after each test method has run, we simply inherit from <a class="xref" href="../../api/Bunit.TestContext.html">TestContext</a>, and methods like <a class="xref" href="../../api/Bunit.TestContext.html#Bunit_TestContext_RenderComponent__1_Bunit_Rendering_ComponentParameter___">RenderComponent&lt;TComponent&gt;(ComponentParameter[])</a> can now be called directly from each test, as seen in the listing above.</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q-1_nunit" role="tabpanel" data-tab="nunit" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-csharp" name="HelloWorldImplicitContextTest.cs">using Bunit;
+using NUnit.Framework;
+
+namespace Bunit.Docs.Samples
+{
+  public class HelloHelloWorldImplicitContextTest : BunitTestContext
+  {
+    [Test]
+    public void HelloWorldComponentRendersCorrectly()
+    {
+      // Act
+      var cut = RenderComponent&lt;HelloWorld&gt;();
+
+      // Assert
+      cut.MarkupMatches(&quot;&lt;h1&gt;Hello world from Blazor&lt;/h1&gt;&quot;);
+    }
+  }
+}
+</code></pre><pre><code class="lang-csharp" name="BunitTestContext.cs">using System;
+using Bunit;
+using Bunit.Rendering;
+using Microsoft.AspNetCore.Components;
+using NUnit.Framework;
+
+namespace Bunit.Docs.Samples
+{
+  public abstract class BunitTestContext : ITestContext, IDisposable
+  {
+    private Bunit.TestContext _context;
+
+    public ITestRenderer Renderer =&gt; _context?.Renderer ?? throw new InvalidOperationException(&quot;NUnit has not started executing tests yet&quot;);
+
+    public TestServiceProvider Services =&gt; _context?.Services ?? throw new InvalidOperationException(&quot;NUnit has not started executing tests yet&quot;);
+
+    public void Dispose()
+    {
+      _context?.Dispose();
+      _context = null;
+    }
+
+    [SetUp]
+    public void Setup() =&gt; _context = new Bunit.TestContext();
+
+    [TearDown]
+    public void TearDown() =&gt; Dispose();
+
+    public IRenderedComponent&lt;TComponent&gt; RenderComponent&lt;TComponent&gt;(params ComponentParameter[] parameters) where TComponent : IComponent
+        =&gt; _context?.RenderComponent&lt;TComponent&gt;(parameters) ?? throw new InvalidOperationException(&quot;NUnit has not started executing tests yet&quot;);
+
+    public IRenderedComponent&lt;TComponent&gt; RenderComponent&lt;TComponent&gt;(Action&lt;ComponentParameterBuilder&lt;TComponent&gt;&gt; parameterBuilder) where TComponent : IComponent
+        =&gt; _context?.RenderComponent&lt;TComponent&gt;(parameterBuilder) ?? throw new InvalidOperationException(&quot;NUnit has not started executing tests yet&quot;);
+  }
+}
+</code></pre>
+<p>Since NUnit instantiates the test class is once, we cannot simply inherit directly from <a class="xref" href="../../api/Bunit.TestContext.html">TestContext</a>, as we want a fresh instance of <a class="xref" href="../../api/Bunit.TestContext.html">TestContext</a> for each test. Instead, we create a helper class, <code>BunitTestContext</code>, which is listed above, and use that to hook into NUnit's <code>[SetUp]</code> and <code>[TearDown]</code> methods, which runs before and after each test.</p>
+<p>Then methods like <a class="xref" href="../../api/Bunit.TestContext.html#Bunit_TestContext_RenderComponent__1_Bunit_Rendering_ComponentParameter___">RenderComponent&lt;TComponent&gt;(ComponentParameter[])</a> can now be called directly from each test, as seen in the listing above.</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q-1_mstest" role="tabpanel" data-tab="mstest" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-csharp" name="HelloWorldImplicitContextTest.cs">using Bunit;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+namespace Bunit.Docs.Samples
+{
+  [TestClass]
+  public class HelloHelloWorldImplicitContextTest : BunitTestContext
+  {
+    [TestMethod]
+    public void HelloWorldComponentRendersCorrectly()
+    {
+      // Act
+      var cut = RenderComponent&lt;HelloWorld&gt;();
+
+      // Assert
+      cut.MarkupMatches(&quot;&lt;h1&gt;Hello world from Blazor&lt;/h1&gt;&quot;);
+    }
+  }
+}
+</code></pre><pre><code class="lang-csharp" name="BunitTestContext.cs">using System;
+using Bunit;
+using Bunit.Rendering;
+using Microsoft.AspNetCore.Components;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+namespace Bunit.Docs.Samples
+{
+  public abstract class BunitTestContext : ITestContext, IDisposable
+  {
+    private Bunit.TestContext _context;
+
+    public ITestRenderer Renderer =&gt; _context?.Renderer ?? throw new InvalidOperationException(&quot;MSTest has not started executing tests yet&quot;);
+
+    public TestServiceProvider Services =&gt; _context?.Services ?? throw new InvalidOperationException(&quot;MSTest has not started executing tests yet&quot;);
+
+    public void Dispose()
+    {
+      _context?.Dispose();
+      _context = null;
+    }
+
+    [TestInitialize]
+    public void Setup() =&gt; _context = new Bunit.TestContext();
+
+    [TestCleanup]
+    public void TearDown() =&gt; Dispose();
+
+    public IRenderedComponent&lt;TComponent&gt; RenderComponent&lt;TComponent&gt;(params ComponentParameter[] parameters) where TComponent : IComponent
+        =&gt; _context?.RenderComponent&lt;TComponent&gt;(parameters) ?? throw new InvalidOperationException(&quot;MSTest has not started executing tests yet&quot;);
+
+    public IRenderedComponent&lt;TComponent&gt; RenderComponent&lt;TComponent&gt;(Action&lt;ComponentParameterBuilder&lt;TComponent&gt;&gt; parameterBuilder) where TComponent : IComponent
+        =&gt; _context?.RenderComponent&lt;TComponent&gt;(parameterBuilder) ?? throw new InvalidOperationException(&quot;MSTest has not started executing tests yet&quot;);
+  }
+}
+</code></pre>
+<p>Since MSTest instantiates the test class is once, we cannot simply inherit directly from <a class="xref" href="../../api/Bunit.TestContext.html">TestContext</a>, as we want a fresh instance of <a class="xref" href="../../api/Bunit.TestContext.html">TestContext</a> for each test. Instead, we create a helper class, <code>BunitTestContext</code>, which is listed above, and use that to hook into MSTest's <code>[TestInitialize]</code> and <code>[TestCleanup]</code> methods, which runs before and after each test.</p>
+<p>Then methods like <a class="xref" href="../../api/Bunit.TestContext.html#Bunit_TestContext_RenderComponent__1_Bunit_Rendering_ComponentParameter___">RenderComponent&lt;TComponent&gt;(ComponentParameter[])</a> can now be called directly from each test, as seen in the listing above.</p>
+</section>
+</div>
+<h2 id="further-reading">Further Reading</h2>
+<p>With the basics out of the way, we will next look at how to pass parameters and inject services into our components under test, and after that, cover in more details the various ways we can verify the outcome of a rendering.</p>
+<ul>
+<li><a class="xref" href="../providing-input/passing-parameters-to-components.html">Passing Parameters to Components</a></li>
+<li><a class="xref" href="../providing-input/inject-services-into-components.html">Injecting Services into Components Under Test</a></li>
+<li><a class="xref" href="../verification/verify-markup.html">Verifying Markup from a Component</a></li>
+<li><a class="xref" href="../verification/verify-component-state.html">Verifying the State of a Component Under Test</a></li>
+<li><a class="xref" href="../interaction/trigger-event-handlers.html">Triggering Event Handlers in Components</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/egil/bUnit/blob/main/docs/site/docs/getting-started/writing-csharp-tests.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            <small>Documentation updated on 7/15/2020 10:04:21 AM +00:00 in commit acbc0e07cf</small>.
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/cshtml-razor.js"></script>
+    <script>
+      hljs.registerLanguage('cshtml-razor', window.hljsDefineCshtmlRazor);
+    </script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

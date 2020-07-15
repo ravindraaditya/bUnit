@@ -1,0 +1,1069 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Passing Parameters to Components | bUnit </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Passing Parameters to Components | bUnit ">
+    <meta name="generator" content="docfx 2.53.1.0">
+    <meta name="description" content="bUnit is a unit testing library for Blazor Components. You can easily define components under test in C# or Razor syntax and verify outcome using semantic HTML diffing/comparison logic. You can interact with and inspect components, trigger event handlers, provide cascading values, inject services, mock IJsRuntime, and perform snapshot testing.">
+    <!--<link rel="shortcut icon" href="../../favicon.ico">-->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="../../toc.html">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    <meta property="docfx:rel" content="../../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img height="60%" id="logo" class="img" src="../..//images/blazor-logo.png" alt="bUnit">
+                <span>bUnit</span>
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="passing-parameters-to-components">
+<h1 id="passing-parameters-to-components">Passing Parameters to Components</h1>
+
+<p>bUnit comes with a bunch of ways to pass parameters to components.</p>
+<p>In Razor-based tests, those written in <code>.razor</code> files, passing parameters is exactly the same as in your normal Blazor pages and components.</p>
+<p>For C#-based test code, help is needed. This comes as:</p>
+<ul>
+<li>Loosely typed factory methods</li>
+<li>Simple tuple-based syntax, i.e. <code>(name, value)</code></li>
+<li>Strongly typed builder (still experimental)</li>
+</ul>
+<p>There are two methods in bUnit that allows passing parameters in C#-based test code:</p>
+<ul>
+<li><code>RenderComponent</code> on the test context</li>
+<li><code>SetParametersAndRender</code> on a rendered component</li>
+</ul>
+<p>In the following sub sections, we will show both C# and Razor-based test code, just click between them using the tabs.</p>
+<div class="TIP">
+<h5>Tip</h5>
+<p>In all examples below, the <a class="xref" href="../../api/Bunit.ComponentParameterFactory.html">ComponentParameterFactory</a> is imported into the test class using <code>using static Bunit.ComponentParameterFactory;</code>. This results in a lot less boilerplate code, which improves test readability.</p>
+<p>With <code>using static</code> import, we can use the factory methods like this:</p>
+<pre><code class="lang-csharp">using static Bunit.ComponentParameterFactory;
+...
+var componentParameter = Parameter(&quot;paramName&quot;, someValue);
+</code></pre>
+<p>With a regular <code>using</code> import, we have to prefix the static factory methods like this:</p>
+<pre><code class="lang-csharp">using Bunit.ComponentParameterFactory;
+...
+var componentParameter = ComponentParameterFactory.Parameter(&quot;paramName&quot;, someValue);
+</code></pre>
+</div>
+<div class="NOTE">
+<h5>Note</h5>
+<p>The examples below are written using xUnit, but the code is the same with NUnit and MSTest.</p>
+</div>
+<h2 id="regular-parameters">Regular Parameters</h2>
+<p>A regular parameter is one that is declared using the <code>[Parameter]</code> attribute. The following subsections will
+cover both <em>non</em> Blazor types parameters, e.g. <code>int</code> and <code>List&lt;string&gt;</code>, and the special Blazor types like <code>EventCallback</code> and <code>RenderFragment</code>.</p>
+<h3 id="non-blazor-type-parameters">Non-Blazor Type Parameters</h3>
+<p>Let us look at an example of passing parameter that takes types which or <em>not</em> special to Blazor, i.e.:</p>
+<pre><code class="lang-csharp" name="NonBlazorTypesParams">public class NonBlazorTypesParams : ComponentBase
+{
+  [Parameter]
+  public int Numbers { get; set; }
+
+  [Parameter]
+  public List&lt;string&gt; Lines { get; set; }
+}
+</code></pre>
+<p>Using either C# or Razor test code, this can be done like this:</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_csharp" role="tab" aria-controls="tabpanel_CeZOj-G++Q_csharp" data-tab="csharp" tabindex="0" aria-selected="true">C# test code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_razor" role="tab" aria-controls="tabpanel_CeZOj-G++Q_razor" data-tab="razor" tabindex="-1">Razor test code</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q_csharp" role="tabpanel" data-tab="csharp">
+<pre><code class="lang-csharp">using var ctx = new TestContext();
+
+// Using C# tuple with hardcoded name
+var cut1 = ctx.RenderComponent&lt;NonBlazorTypesParams&gt;(
+  (&quot;Numbers&quot;, 42),
+  (&quot;Lines&quot;, new List&lt;string&gt; { &quot;Hello&quot;, &quot;World&quot; })
+);
+
+// Using C# tuple with refactor safe name
+var cut2 = ctx.RenderComponent&lt;NonBlazorTypesParams&gt;(
+  (nameof(NonBlazorTypesParams.Numbers), 42),
+  (nameof(NonBlazorTypesParams.Lines), new List&lt;string&gt; { &quot;Hello&quot;, &quot;World&quot; })
+);
+
+// Using factory method
+var cut3 = ctx.RenderComponent&lt;NonBlazorTypesParams&gt;(
+  Parameter(&quot;Numbers&quot;, 42),
+  Parameter(&quot;Lines&quot;, new List&lt;string&gt; { &quot;Hello&quot;, &quot;World&quot; })
+);
+
+// Using parameter builder
+var cut4 = ctx.RenderComponent&lt;NonBlazorTypesParams&gt;(parameters =&gt; parameters
+  .Add(p =&gt; p.Numbers, 42)
+  .Add(p =&gt; p.Lines, new List&lt;string&gt; { &quot;Hello&quot;, &quot;World&quot; })
+);
+</code></pre>
+<p>All of these examples do the same thing, here is what is going on:</p>
+<ol>
+<li>The first example passes parameters using C# tuples, <code>(string name, object? value)</code>.</li>
+<li>The second example also uses C# tuples to pass the parameters, but the name is retrieved in a refactor safe manner using the <code>nameof</code> keyword in C#.</li>
+<li>The third example uses the <a class="xref" href="../../api/Bunit.ComponentParameterFactory.html#Bunit_ComponentParameterFactory_Parameter_System_String_System_Object_">Parameter(String, Object)</a> factory method.</li>
+<li>The last example uses the <a class="xref" href="../../api/Bunit.ComponentParameterBuilder-1.html">ComponentParameterBuilder&lt;TComponent&gt;</a>'s <code>Add</code> method, which takes a parameter selector expression that selects the parameter using a lambda, and forces you to provide the correct type for the value. This makes the builders methods strongly typed and refactor safe.</li>
+</ol>
+</section>
+<section id="tabpanel_CeZOj-G++Q_razor" role="tabpanel" data-tab="razor" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-html">&lt;Fixture Test=&quot;f =&gt; {}&quot;&gt;
+  &lt;ComponentUnderTest&gt;
+    &lt;NonBlazorTypesParams Numbers=&quot;42&quot; Lines=@(new List&lt;string&gt; { &quot;Hello&quot;, &quot;World&quot; }) /&gt;
+  &lt;/ComponentUnderTest&gt;
+&lt;/Fixture&gt;
+</code></pre>
+<p>This is just regular Blazor parameter passing, which is the same for both <code>Fixture</code> and <code>SnapshotTest</code> razor tests.</p>
+</section>
+</div>
+<h3 id="eventcallback-parameters">EventCallback Parameters</h3>
+<p>This example will pass parameters to the follow two <code>EventCallback</code> parameters:</p>
+<pre><code class="lang-csharp" name="EventCallbackParams">public class EventCallbackParams : ComponentBase
+{
+  [Parameter]
+  public EventCallback&lt;MouseEventArgs&gt; OnClick { get; set; }
+
+  [Parameter]
+  public EventCallback OnSomething { get; set; }
+}
+</code></pre>
+<p>Using either C# or Razor test code, this can be done like this:</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-1">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_csharp" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_csharp" data-tab="csharp" tabindex="0" aria-selected="true">C# test code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_razor" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_razor" data-tab="razor" tabindex="-1">Razor test code</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-1_csharp" role="tabpanel" data-tab="csharp">
+<pre><code class="lang-csharp">using var ctx = new TestContext();
+
+// Using factory method with hardcoded name
+var cut1 = ctx.RenderComponent&lt;EventCallbackParams&gt;(
+  EventCallback(&quot;OnClick&quot;, (MouseEventArgs args) =&gt; { /* handle callback */ }),
+  EventCallback(&quot;OnSomething&quot;, () =&gt; { /* handle callback */ })
+);
+
+// Using factory method refactor safe name
+var cut2 = ctx.RenderComponent&lt;EventCallbackParams&gt;(
+  EventCallback(nameof(EventCallbackParams.OnClick), (MouseEventArgs args) =&gt; { /* handle callback */ }),
+  EventCallback(nameof(EventCallbackParams.OnSomething), () =&gt; { /* handle callback */ })
+);
+
+// Using parameter builder
+var cut3 = ctx.RenderComponent&lt;EventCallbackParams&gt;(parameters =&gt; parameters
+  .Add(p =&gt; p.OnClick, args =&gt; { /* handle callback */ })
+  .Add(p =&gt; p.OnSomething, () =&gt; { /* handle callback */ })
+);
+</code></pre>
+<p>These examples o the same thing, here is what is going on:</p>
+<ol>
+<li>The first and second example uses the <code>EventCallback</code> factory method in <a class="xref" href="../../api/Bunit.ComponentParameterFactory.html">ComponentParameterFactory</a> (there are many overloads that take different kinds of <code>Action</code> and <code>Func</code> delegates), to pass a lambda as the event callback to the specified parameter.</li>
+<li>The second example uses the <a class="xref" href="../../api/Bunit.ComponentParameterBuilder-1.html">ComponentParameterBuilder&lt;TComponent&gt;</a>'s <code>Add</code> method, which takes a parameter selector expression that selects the parameter using a lambda, and forces you to provide the correct type of callback method. This makes the builders methods strongly typed and refactor safe.</li>
+</ol>
+</section>
+<section id="tabpanel_CeZOj-G++Q-1_razor" role="tabpanel" data-tab="razor" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-html">&lt;Fixture Test=&quot;f =&gt; {}&quot;&gt;
+  &lt;ComponentUnderTest&gt;
+    &lt;EventCallbackParams OnClick=@(args =&gt; { /* handle callback */ }) 
+                         OnSomething=@(() =&gt; { /* handle callback */ }) /&gt;
+  &lt;/ComponentUnderTest&gt;
+&lt;/Fixture&gt;
+</code></pre>
+<p>This is just regular Blazor parameter passing, which is the same for both <code>Fixture</code> and <code>SnapshotTest</code> razor tests.</p>
+</section>
+</div>
+<h3 id="childcontent-parameters">ChildContent Parameters</h3>
+<p>The <code>ChildContent</code> parameter in Blazor is represented by a <code>RenderFragment</code>. In Blazor, this can be regular HTML markup, it can be Razor markup, e.g. other component declarations, or a mix of the two. If it is another component, then that component can also receive child content, and so forth.</p>
+<p>The following subsections has different examples of child content being passed to the following component:</p>
+<pre><code class="lang-csharp" name="ChildContentParams.razor">public class ChildContentParams : ComponentBase
+{
+  [Parameter]
+  public RenderFragment ChildContent { get; set; }
+}
+</code></pre><h4 id="passing-html-to-the-childcontent-parameter">Passing HTML to the ChildContent Parameter</h4>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-2">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-2_csharp" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_csharp" data-tab="csharp" tabindex="0" aria-selected="true">C# test code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-2_razor" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_razor" data-tab="razor" tabindex="-1">Razor test code</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-2_csharp" role="tabpanel" data-tab="csharp">
+<pre><code class="lang-csharp">using var ctx = new TestContext();
+
+// Using factory method
+var cut1 = ctx.RenderComponent&lt;ChildContentParams&gt;(
+  ChildContent(&quot;&lt;h1&gt;Hello World&lt;/h1&gt;&quot;)
+);
+
+// Using parameter builder
+var cut2 = ctx.RenderComponent&lt;ChildContentParams&gt;(parameters =&gt; parameters
+  .AddChildContent(&quot;&lt;h1&gt;Hello World&lt;/h1&gt;&quot;)
+);
+</code></pre>
+<p>These examples do the same thing, here is what is going on:</p>
+<ol>
+<li>The first example uses the <code>ChildContent</code> factory method in <a class="xref" href="../../api/Bunit.ComponentParameterFactory.html">ComponentParameterFactory</a>, to pass a HTML markup string as the input to the <code>ChildContent</code> parameter.</li>
+<li>The second example uses the <a class="xref" href="../../api/Bunit.ComponentParameterBuilder-1.html">ComponentParameterBuilder&lt;TComponent&gt;</a>'s <code>AddChildContent</code> method to pass a HTML markup string as the input to the <code>ChildContent</code> parameter.</li>
+</ol>
+</section>
+<section id="tabpanel_CeZOj-G++Q-2_razor" role="tabpanel" data-tab="razor" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-html">&lt;Fixture Test=&quot;f =&gt; {}&quot;&gt;
+  &lt;ComponentUnderTest&gt;
+    &lt;ChildContentParams&gt;
+      &lt;h1&gt;Hello World&lt;/h1&gt;
+    &lt;/ChildContentParams&gt;
+  &lt;/ComponentUnderTest&gt;
+&lt;/Fixture&gt;
+</code></pre>
+<p>This is just regular Blazor child content parameter passing, e.g. as child content to the component under test, which is the same for both <code>Fixture</code> and <code>SnapshotTest</code> razor tests.</p>
+</section>
+</div>
+<h4 id="passing-a-component-without-parameters-to-the-childcontent-parameter">Passing a Component without Parameters to the ChildContent Parameter</h4>
+<p>To pass a component, e.g. the classic <code>&lt;Counter&gt;</code> component, that does not take any parameters itself, to a <code>ChildContent</code> parameter, do the following:</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-3">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-3_csharp" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_csharp" data-tab="csharp" tabindex="0" aria-selected="true">C# test code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-3_razor" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_razor" data-tab="razor" tabindex="-1">Razor test code</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-3_csharp" role="tabpanel" data-tab="csharp">
+<pre><code class="lang-csharp">using var ctx = new TestContext();
+
+// Using factory method
+var cut1 = ctx.RenderComponent&lt;ChildContentParams&gt;(
+  ChildContent&lt;Counter&gt;()
+);
+
+// Using parameter builder
+var cut2 = ctx.RenderComponent&lt;ChildContentParams&gt;(parameters =&gt; parameters
+  .AddChildContent&lt;Counter&gt;()
+);
+</code></pre>
+<p>These examples do the same thing, here is what is going on:</p>
+<ol>
+<li>The first example uses the <code>ChildContent&lt;TChildComponent&gt;</code> factory method in <a class="xref" href="../../api/Bunit.ComponentParameterFactory.html">ComponentParameterFactory</a>, where <code>TChildComponent</code> is the (child) component that should be passed to the component under test's <code>ChildContent</code> parameter.</li>
+<li>The second example uses the <a class="xref" href="../../api/Bunit.ComponentParameterBuilder-1.html">ComponentParameterBuilder&lt;TComponent&gt;</a>'s <code>AddChildContent&lt;TChildComponent&gt;</code> method, where <code>TChildComponent</code> is the (child) component that should be passed to the component under test's <code>ChildContent</code> parameter.</li>
+</ol>
+</section>
+<section id="tabpanel_CeZOj-G++Q-3_razor" role="tabpanel" data-tab="razor" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-html">&lt;Fixture Test=&quot;f =&gt; {}&quot;&gt;
+  &lt;ComponentUnderTest&gt;
+    &lt;ChildContentParams&gt;
+      &lt;Counter /&gt;
+    &lt;/ChildContentParams&gt;
+  &lt;/ComponentUnderTest&gt;
+&lt;/Fixture&gt;
+</code></pre>
+<p>This is just regular Blazor child content parameter passing, where the <code>&lt;Counter /&gt;</code> component is declared inside the component under test.  This is the same for both <code>Fixture</code> and <code>SnapshotTest</code> razor tests.</p>
+</section>
+</div>
+<h4 id="passing-a-component-with-parameters-to-the-childcontent-parameter">Passing a Component with Parameters to the ChildContent Parameter</h4>
+<p>To pass a component with parameters to a component under test, e.g. the <code>&lt;Alert&gt;</code> component with the following parameters, do the following:</p>
+<pre><code class="lang-csharp" name="Alert.razor">[Parameter] public string Heading { get; set; }
+[Parameter] public AlertType Type { get; set; }
+[Parameter] public RenderFragment ChildContent { get; set; }
+</code></pre><div class="tabGroup" id="tabgroup_CeZOj-G++Q-4">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-4_csharp" role="tab" aria-controls="tabpanel_CeZOj-G++Q-4_csharp" data-tab="csharp" tabindex="0" aria-selected="true">C# test code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-4_razor" role="tab" aria-controls="tabpanel_CeZOj-G++Q-4_razor" data-tab="razor" tabindex="-1">Razor test code</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-4_csharp" role="tabpanel" data-tab="csharp">
+<pre><code class="lang-csharp">using var ctx = new TestContext();
+
+// Using factory method
+var cut1 = ctx.RenderComponent&lt;ChildContentParams&gt;(
+  ChildContent&lt;Alert&gt;(
+    (&quot;Heading&quot;, &quot;Alert heading&quot;),
+    (&quot;Type&quot;, AlertType.Warning),
+    ChildContent(&quot;&lt;p&gt;Hello World&lt;/p&gt;&quot;)
+  )
+);
+
+// Using parameter builder
+var cut2 = ctx.RenderComponent&lt;ChildContentParams&gt;(parameters =&gt; parameters
+  .AddChildContent&lt;Alert&gt;(alertParameters =&gt; alertParameters
+    .Add(p =&gt; p.Heading, &quot;Alert heading&quot;)
+    .Add(p =&gt; p.Type, AlertType.Warning)
+    .AddChildContent(&quot;&lt;p&gt;Hello World&lt;/p&gt;&quot;)
+  )
+);
+</code></pre>
+<p>These examples do the same thing, here is what is going on:</p>
+<ol>
+<li>The first example uses the <code>ChildContent&lt;TChildComponent&gt;</code> factory method in <a class="xref" href="../../api/Bunit.ComponentParameterFactory.html">ComponentParameterFactory</a>, where <code>TChildComponent</code> is the (child) component that should be passed to the component under test. <code>ChildContent&lt;TChildComponent&gt;</code> factory method can take zero or more component parameters as input itself, which will be passed to the <code>TChildComponent</code> component, in this case, the <code>&lt;Alert&gt;</code> component.</li>
+<li>The second example uses the <a class="xref" href="../../api/Bunit.ComponentParameterBuilder-1.html">ComponentParameterBuilder&lt;TComponent&gt;</a>'s <code>AddChildContent&lt;TChildComponent&gt;</code> method, where <code>TChildComponent</code> is the (child) component that should be passed to the component under test. The <code>AddChildContent&lt;TChildComponent&gt;</code> method takes an optional <a class="xref" href="../../api/Bunit.ComponentParameterBuilder-1.html">ComponentParameterBuilder&lt;TComponent&gt;</a> as input, which can be used to pass parameters to the <code>TChildComponent</code> component, in this case, the <code>&lt;Alert&gt;</code> component.</li>
+</ol>
+</section>
+<section id="tabpanel_CeZOj-G++Q-4_razor" role="tabpanel" data-tab="razor" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-html">&lt;Fixture Test=&quot;f =&gt; {}&quot;&gt;
+  &lt;ComponentUnderTest&gt;
+    &lt;ChildContentParams&gt;
+      &lt;Alert Heading=&quot;Alert heading&quot; Type=&quot;AlertType.Warning&quot;&gt;
+        &lt;p&gt;Hello World&lt;/p&gt;
+      &lt;/Alert&gt;
+    &lt;/ChildContentParams&gt;
+  &lt;/ComponentUnderTest&gt;
+&lt;/Fixture&gt;
+</code></pre>
+<p>This is just regular Blazor child content parameter passing, where the <code>&lt;Alert&gt;</code> component is declared inside the component under test, and any parameters is passed to it like normal in Blazor. This is the same for both <code>Fixture</code> and <code>SnapshotTest</code> razor tests.</p>
+</section>
+</div>
+<h4 id="passing-a-mix-of-razor-and-html-to-childcontent-parameter">Passing a mix of Razor and HTML to ChildContent Parameter</h4>
+<p>The easiest way to pass a mix of HTML markup and Razor markup to a <code>ChildContent</code> parameter is to use Razor based tests, as the example below illustrates. It is possible to do it in C# only tests, but that means writing <code>RenderTreeBuilder</code> code.</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-5">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-5_csharp" role="tab" aria-controls="tabpanel_CeZOj-G++Q-5_csharp" data-tab="csharp" tabindex="0" aria-selected="true">C# test code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-5_razor" role="tab" aria-controls="tabpanel_CeZOj-G++Q-5_razor" data-tab="razor" tabindex="-1">Razor test code</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-5_csharp" role="tabpanel" data-tab="csharp">
+<pre><code class="lang-csharp">using var ctx = new TestContext();
+
+// Using parameter builder
+var cut = ctx.RenderComponent&lt;ChildContentParams&gt;(parameters =&gt; parameters
+  .Add(p =&gt; p.ChildContent, (RenderFragment)(builder =&gt;
+  {
+    builder.AddMarkupContent(1, &quot;&lt;h1&gt;Below you will find a most interesting alert!&lt;/h1&gt;&quot;);
+    builder.OpenComponent&lt;Alert&gt;(2);
+    builder.AddAttribute(3, &quot;Heading&quot;, &quot;Alert heading&quot;);
+    builder.AddAttribute(4, &quot;Type&quot;, AlertType.Warning);
+    builder.AddAttribute(5, &quot;ChildContent&quot;, (RenderFragment)(alertBuilder =&gt; alertBuilder.AddMarkupContent(1, &quot;&lt;p&gt;Hello World&lt;/p&gt;&quot;)));
+    builder.CloseComponent();
+  }))
+);
+</code></pre>
+<p>Passing a mix of markup and a component to a <code>ChildContent</code> parameter is currently only possible using the <a class="xref" href="../../api/Bunit.ComponentParameterBuilder-1.html">ComponentParameterBuilder&lt;TComponent&gt;</a>, and unfortunately you have to create the render fragment manually using the <code>RenderTreeBuilder</code>, like this example demonstrates.</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q-5_razor" role="tabpanel" data-tab="razor" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-html">&lt;Fixture Test=&quot;f =&gt; {}&quot;&gt;
+  &lt;ComponentUnderTest&gt;
+    &lt;ChildContentParams&gt;
+      &lt;h1&gt;Below you will find a most interesting alert!&lt;/h1&gt;
+      &lt;Alert Heading=&quot;Alert heading&quot; Type=&quot;AlertType.Warning&quot;&gt;
+        &lt;p&gt;Hello World&lt;/p&gt;
+      &lt;/Alert&gt;
+    &lt;/ChildContentParams&gt;
+  &lt;/ComponentUnderTest&gt;
+&lt;/Fixture&gt;
+</code></pre>
+<p>This is just regular Blazor child content parameter passing, where regular HTML markup and an <code>&lt;Alert&gt;</code> component is declared inside the component under test, and any parameters is passed to it like normal in Blazor. This is the same for both <code>Fixture</code> and <code>SnapshotTest</code> razor tests.</p>
+</section>
+</div>
+<h3 id="renderfragment-parameters">RenderFragment Parameters</h3>
+<p>A <code>RenderFragment</code> parameter is very similar to the special <code>ChildContent</code> parameter described in the previous section, since a <code>ChildContent</code> parameter <em>is</em> of type <code>RenderFragment</code>. The only difference is the name, which must be anything other than <code>ChildContent</code>.</p>
+<p>In Blazor, a <code>RenderFragment</code> parameter can be regular HTML markup, it can be Razor markup, e.g. other component declarations, or a mix of the two. If it is another component, then that component can also receive child content, and so forth.</p>
+<p>The following subsections has different examples of content being passed to the following component's <code>RenderFragment</code> parameter:</p>
+<pre><code class="lang-csharp" name="RenderFragmentParams.razor">  public class RenderFragmentParams : ComponentBase
+  {
+    [Parameter]
+    public RenderFragment Content { get; set; }
+  }
+}
+</code></pre><h4 id="passing-html-to-a-renderfragment-parameter">Passing HTML to a RenderFragment Parameter</h4>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-6">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-6_csharp" role="tab" aria-controls="tabpanel_CeZOj-G++Q-6_csharp" data-tab="csharp" tabindex="0" aria-selected="true">C# test code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-6_razor" role="tab" aria-controls="tabpanel_CeZOj-G++Q-6_razor" data-tab="razor" tabindex="-1">Razor test code</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-6_csharp" role="tabpanel" data-tab="csharp">
+<pre><code class="lang-csharp">using var ctx = new TestContext();
+
+// Using factory method
+var cut1 = ctx.RenderComponent&lt;RenderFragmentParams&gt;(
+  RenderFragment(&quot;Content&quot;, &quot;&lt;h1&gt;Hello World&lt;/h1&gt;&quot;)
+);
+
+// Using parameter builder
+var cut2 = ctx.RenderComponent&lt;RenderFragmentParams&gt;(parameters =&gt; parameters
+  .Add(p =&gt; p.Content, &quot;&lt;h1&gt;Hello World&lt;/h1&gt;&quot;)
+);
+</code></pre>
+<p>These examples do the same thing, here is what is going on:</p>
+<ol>
+<li>The first example uses the <code>RenderFragment</code> factory method in <a class="xref" href="../../api/Bunit.ComponentParameterFactory.html">ComponentParameterFactory</a>, to pass a HTML markup string as the input to the <code>RenderFragment</code> parameter.</li>
+<li>The second example uses the <a class="xref" href="../../api/Bunit.ComponentParameterBuilder-1.html">ComponentParameterBuilder&lt;TComponent&gt;</a>'s <code>Add</code> method to pass a HTML markup string as the input to the <code>RenderFragment</code> parameter.</li>
+</ol>
+</section>
+<section id="tabpanel_CeZOj-G++Q-6_razor" role="tabpanel" data-tab="razor" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-html">&lt;Fixture Test=&quot;f =&gt; {}&quot;&gt;
+  &lt;ComponentUnderTest&gt;
+    &lt;RenderFragmentParams&gt;
+      &lt;Content&gt;
+        &lt;h1&gt;Hello World&lt;/h1&gt;
+      &lt;/Content&gt;
+    &lt;/RenderFragmentParams&gt;
+  &lt;/ComponentUnderTest&gt;
+&lt;/Fixture&gt;
+</code></pre>
+<p>This is just regular Blazor <code>RenderFragment</code> parameter passing, e.g. as markup in the component under test's <code>&lt;Content&gt;</code> element, which is the same for both <code>Fixture</code> and <code>SnapshotTest</code> razor tests.</p>
+</section>
+</div>
+<h4 id="passing-a-component-without-parameters-to-a-renderfragment-parameter">Passing a Component without Parameters to a RenderFragment Parameter</h4>
+<p>To pass a component, e.g. the classic <code>&lt;Counter&gt;</code> component, which does not take any parameters, to a <code>RenderFragment</code> parameter, do the following:</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-7">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-7_csharp" role="tab" aria-controls="tabpanel_CeZOj-G++Q-7_csharp" data-tab="csharp" tabindex="0" aria-selected="true">C# test code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-7_razor" role="tab" aria-controls="tabpanel_CeZOj-G++Q-7_razor" data-tab="razor" tabindex="-1">Razor test code</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-7_csharp" role="tabpanel" data-tab="csharp">
+<pre><code class="lang-csharp">using var ctx = new TestContext();
+
+// Using factory method
+var cut1 = ctx.RenderComponent&lt;RenderFragmentParams&gt;(
+  RenderFragment&lt;Counter&gt;(&quot;Content&quot;)
+);
+
+// Using parameter builder
+var cut2 = ctx.RenderComponent&lt;RenderFragmentParams&gt;(parameters =&gt; parameters
+  .Add&lt;Counter&gt;(p =&gt; p.Content)
+);
+</code></pre>
+<p>These examples do the same thing, here is what is going on:</p>
+<ol>
+<li>The first example uses the <code>Add&lt;TChildComponent&gt;</code> factory method in <a class="xref" href="../../api/Bunit.ComponentParameterFactory.html">ComponentParameterFactory</a>, where <code>TChildComponent</code> is the (child) component that should be passed to the <code>RenderFragment</code> parameter.</li>
+<li>The second example uses the <a class="xref" href="../../api/Bunit.ComponentParameterBuilder-1.html">ComponentParameterBuilder&lt;TComponent&gt;</a>'s <code>Add&lt;TChildComponent&gt;</code> method, where <code>TChildComponent</code> is the (child) component that should be passed to the <code>RenderFragment</code> parameter.</li>
+</ol>
+</section>
+<section id="tabpanel_CeZOj-G++Q-7_razor" role="tabpanel" data-tab="razor" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-html">&lt;Fixture Test=&quot;f =&gt; {}&quot;&gt;
+  &lt;ComponentUnderTest&gt;
+    &lt;RenderFragmentParams&gt;
+      &lt;Content&gt;
+        &lt;Counter /&gt;
+      &lt;/Content&gt;
+    &lt;/RenderFragmentParams&gt;
+  &lt;/ComponentUnderTest&gt;
+&lt;/Fixture&gt;
+</code></pre>
+<p>This is just regular Blazor child content parameter passing, where the <code>&lt;Counter /&gt;</code> component is declared inside component under test's <code>&lt;Content&gt;</code> element.  This is the same for both <code>Fixture</code> and <code>SnapshotTest</code> razor tests.</p>
+</section>
+</div>
+<h4 id="passing-a-component-with-parameters-to-a-renderfragment-parameter">Passing a Component with Parameters to a RenderFragment Parameter</h4>
+<p>To pass a component with parameters to a <code>RenderFragment</code> parameter, e.g. the <code>&lt;Alert&gt;</code> component with the following parameters, do the following:</p>
+<pre><code class="lang-csharp" name="Alert.razor">[Parameter] public string Heading { get; set; }
+[Parameter] public AlertType Type { get; set; }
+[Parameter] public RenderFragment ChildContent { get; set; }
+</code></pre><div class="tabGroup" id="tabgroup_CeZOj-G++Q-8">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-8_csharp" role="tab" aria-controls="tabpanel_CeZOj-G++Q-8_csharp" data-tab="csharp" tabindex="0" aria-selected="true">C# test code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-8_razor" role="tab" aria-controls="tabpanel_CeZOj-G++Q-8_razor" data-tab="razor" tabindex="-1">Razor test code</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-8_csharp" role="tabpanel" data-tab="csharp">
+<pre><code class="lang-csharp">using var ctx = new TestContext();
+
+// Using factory method
+var cut1 = ctx.RenderComponent&lt;RenderFragmentParams&gt;(
+  RenderFragment&lt;Alert&gt;(&quot;Content&quot;,
+    (&quot;Heading&quot;, &quot;Alert heading&quot;),
+    (&quot;Type&quot;, AlertType.Warning),
+    ChildContent(&quot;&lt;p&gt;Hello World&lt;/p&gt;&quot;)
+  )
+);
+
+// Using parameter builder
+var cut2 = ctx.RenderComponent&lt;RenderFragmentParams&gt;(parameters =&gt; parameters
+  .Add&lt;Alert&gt;(p =&gt; p.Content, alertParameters =&gt; alertParameters
+    .Add(p =&gt; p.Heading, &quot;Alert heading&quot;)
+    .Add(p =&gt; p.Type, AlertType.Warning)
+    .AddChildContent(&quot;&lt;p&gt;Hello World&lt;/p&gt;&quot;)
+  )
+);
+</code></pre>
+<p>These examples do the same thing, here is what is going on:</p>
+<ol>
+<li>The first example uses the <code>RenderFragment&lt;TChildComponent&gt;</code> factory method in <a class="xref" href="../../api/Bunit.ComponentParameterFactory.html">ComponentParameterFactory</a>, where <code>TChildComponent</code> is the (child) component that should be passed to the  <code>RenderFragment</code> parameter. <code>RenderFragment&lt;TChildComponent&gt;</code> factory method takes the name of the parameter and zero or more component parameters as input, which will be passed to the <code>TChildComponent</code> component, in this case, the <code>&lt;Alert&gt;</code> component.</li>
+<li>The second example uses the <a class="xref" href="../../api/Bunit.ComponentParameterBuilder-1.html">ComponentParameterBuilder&lt;TComponent&gt;</a>'s <code>Add&lt;TChildComponent&gt;</code> method, where <code>TChildComponent</code> is the (child) component that should be passed to the <code>RenderFragment</code> parameter. The <code>Add&lt;TChildComponent&gt;</code> method takes an optional <a class="xref" href="../../api/Bunit.ComponentParameterBuilder-1.html">ComponentParameterBuilder&lt;TComponent&gt;</a> as input, which can be used to pass parameters to the <code>TChildComponent</code> component, in this case, the <code>&lt;Alert&gt;</code> component.</li>
+</ol>
+</section>
+<section id="tabpanel_CeZOj-G++Q-8_razor" role="tabpanel" data-tab="razor" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-html">&lt;Fixture Test=&quot;f =&gt; {}&quot;&gt;
+  &lt;ComponentUnderTest&gt;
+    &lt;RenderFragmentParams&gt;
+      &lt;Content&gt;
+        &lt;Alert Heading=&quot;Alert heading&quot; Type=&quot;AlertType.Warning&quot;&gt;
+          &lt;p&gt;Hello World&lt;/p&gt;
+        &lt;/Alert&gt;
+      &lt;/Content&gt;
+    &lt;/RenderFragmentParams&gt;
+  &lt;/ComponentUnderTest&gt;
+&lt;/Fixture&gt;
+</code></pre>
+<p>This is just regular Blazor <code>RenderFragment</code> parameter passing, where the <code>&lt;Alert&gt;</code> component is declared inside the component under test's <code>&lt;Content&gt;</code> element, and any parameters is passed to it like normal in Blazor. This is the same for both <code>Fixture</code> and <code>SnapshotTest</code> razor tests.</p>
+</section>
+</div>
+<h4 id="passing-a-mix-of-razor-and-html-a-renderfragment-parameter">Passing a mix of Razor and HTML a RenderFragment Parameter</h4>
+<p>The easiest way to pass a mix of HTML markup and Razor markup to a <code>RenderFragment</code> parameter is to use Razor based tests, as the example below illustrates. It is possible to do it in C# only tests, but that means writing <code>RenderTreeBuilder</code> code.</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-9">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-9_csharp" role="tab" aria-controls="tabpanel_CeZOj-G++Q-9_csharp" data-tab="csharp" tabindex="0" aria-selected="true">C# test code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-9_razor" role="tab" aria-controls="tabpanel_CeZOj-G++Q-9_razor" data-tab="razor" tabindex="-1">Razor test code</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-9_csharp" role="tabpanel" data-tab="csharp">
+<pre><code class="lang-csharp">using var ctx = new TestContext();
+
+// Using parameter builder
+var cut = ctx.RenderComponent&lt;RenderFragmentParams&gt;(parameters =&gt; parameters
+  .Add(p =&gt; p.Content, (RenderFragment)(builder =&gt;
+  {
+    builder.AddMarkupContent(1, &quot;&lt;h1&gt;Below you will find a most interesting alert!&lt;/h1&gt;&quot;);
+    builder.OpenComponent&lt;Alert&gt;(2);
+    builder.AddAttribute(3, &quot;Heading&quot;, &quot;Alert heading&quot;);
+    builder.AddAttribute(4, &quot;Type&quot;, AlertType.Warning);
+    builder.AddAttribute(5, &quot;ChildContent&quot;, (RenderFragment)(alertBuilder =&gt; alertBuilder.AddMarkupContent(1, &quot;&lt;p&gt;Hello World&lt;/p&gt;&quot;)));
+    builder.CloseComponent();
+  }))
+);
+</code></pre>
+<p>Passing a mix of markup and a component to a <code>RenderFragment</code> parameter is currently only possible using the <a class="xref" href="../../api/Bunit.ComponentParameterBuilder-1.html">ComponentParameterBuilder&lt;TComponent&gt;</a>, and unfortunately you have to create the render fragment manually using the <code>RenderTreeBuilder</code>, like this example demonstrates.</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q-9_razor" role="tabpanel" data-tab="razor" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-html">&lt;Fixture Test=&quot;f =&gt; {}&quot;&gt;
+  &lt;ComponentUnderTest&gt;
+    &lt;RenderFragmentParams&gt;
+      &lt;Content&gt;
+        &lt;h1&gt;Below you will find a most interesting alert!&lt;/h1&gt;
+        &lt;Alert Heading=&quot;Alert heading&quot; Type=&quot;AlertType.Warning&quot;&gt;
+          &lt;p&gt;Hello World&lt;/p&gt;
+        &lt;/Alert&gt;
+      &lt;/Content&gt;
+    &lt;/RenderFragmentParams&gt;
+  &lt;/ComponentUnderTest&gt;
+&lt;/Fixture&gt;
+</code></pre>
+<p>This is just regular Blazor <code>RenderFragment</code> parameter passing, where regular HTML markup and an <code>&lt;Alert&gt;</code> component is declared inside the component under test's <code>&lt;Content&gt;</code> element, and any parameters is passed to it like normal in Blazor. This is the same for both <code>Fixture</code> and <code>SnapshotTest</code> razor tests.</p>
+</section>
+</div>
+<h3 id="templates-parameters">Templates Parameters</h3>
+<p>Template parameters are closely related to <code>RenderFragment</code> parameters described in the previous section. The difference is that a template parameter is of type <code>RenderFragment&lt;TValue&gt;</code>. Like with regular <code>RenderFragment</code>, a <code>RenderFragment&lt;TValue&gt;</code> template parameter can be regular HTML markup, it can be Razor markup, e.g. other component declarations, or a mix of the two. If it is another component, then that component can also receive child content, and so forth.</p>
+<p>The following examples renders this template component, which has a <code>RenderFragment&lt;TValue&gt;</code> template parameter:</p>
+<pre><code class="lang-csharp" name="TemplateParams.razor">@typeparam TItem
+
+&lt;div id=&quot;generic-list&quot;&gt;
+  @foreach (var item in Items)
+  {
+    @Template(item)
+  }
+&lt;/div&gt;
+
+@code 
+{
+  [Parameter]
+  public IEnumerable&lt;TItem&gt; Items { get; set; }
+
+  [Parameter]
+  public RenderFragment&lt;TItem&gt; Template { get; set; }
+}
+</code></pre><h4 id="passing-a-html-based-templates">Passing a HTML based templates</h4>
+<p>To pass a template into a <code>RenderFragment&lt;TValue&gt;</code> parameter, that just consists of regular HTML markup, do the following:</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-10">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-10_csharp" role="tab" aria-controls="tabpanel_CeZOj-G++Q-10_csharp" data-tab="csharp" tabindex="0" aria-selected="true">C# test code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-10_razor" role="tab" aria-controls="tabpanel_CeZOj-G++Q-10_razor" data-tab="razor" tabindex="-1">Razor test code</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-10_csharp" role="tabpanel" data-tab="csharp">
+<pre><code class="lang-csharp">using var ctx = new TestContext();
+
+// Using factory method
+var cut1 = ctx.RenderComponent&lt;TemplateParams&lt;string&gt;&gt;(
+  (&quot;Items&quot;, new string[] { &quot;Foo&quot;, &quot;Bar&quot;, &quot;Baz&quot; }),
+  Template&lt;string&gt;(&quot;Template&quot;, item =&gt; $&quot;&lt;span&gt;{item}&lt;/span&gt;&quot;)
+);
+
+// Using parameter builder
+var cut2 = ctx.RenderComponent&lt;TemplateParams&lt;string&gt;&gt;(parameters =&gt; parameters
+  .Add(p =&gt; p.Items, new[] { &quot;Foo&quot;, &quot;Bar&quot;, &quot;Baz&quot; })
+  .Add(p =&gt; p.Template, item =&gt; $&quot;&lt;span&gt;{item}&lt;/span&gt;&quot;)
+);
+</code></pre>
+<p>These examples do the same thing, i.e. pass a HTML markup template into the component under test. This is done with the help of a <code>Func&lt;TValue, string&gt;</code> delegate, that takes whatever the template value is as input, and returns a (markup) string. The delegate is automatically turned into a <code>RenderFragment&lt;TValue&gt;</code> type and pass to the template parameter.</p>
+<ol>
+<li>The first example passes data to the <code>Items</code> parameter, and then it uses the <code>Template&lt;TValue&gt;</code> factory method in <a class="xref" href="../../api/Bunit.ComponentParameterFactory.html">ComponentParameterFactory</a>, that takes the name of the <code>RenderFragment&lt;TValue&gt;</code> template parameter, and the <code>Func&lt;TValue, string&gt;</code> delegate as input.</li>
+<li>The second example uses the <a class="xref" href="../../api/Bunit.ComponentParameterBuilder-1.html">ComponentParameterBuilder&lt;TComponent&gt;</a>'s <code>Add</code> method to first add the data to <code>Items</code> parameter and then a <code>Func&lt;TValue, string&gt;</code> delegate.</li>
+</ol>
+<p>The delegate creates a simple markup string in both examples.</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q-10_razor" role="tabpanel" data-tab="razor" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-html">&lt;Fixture Test=&quot;f =&gt; {}&quot;&gt;
+  &lt;ComponentUnderTest&gt;
+    &lt;TemplateParams Items=@(new string[]{ &quot;Foo&quot;, &quot;Bar&quot;, &quot;Baz&quot; }) TItem=&quot;string&quot;&gt;
+      &lt;Template&gt;
+        &lt;span&gt;@context&lt;/span&gt;
+      &lt;/Template&gt;
+    &lt;/TemplateParams&gt;
+  &lt;/ComponentUnderTest&gt;
+&lt;/Fixture&gt;
+
+&lt;Fixture Test=&quot;f =&gt; {}&quot;&gt;
+  &lt;ComponentUnderTest&gt;
+</code></pre>
+<p>This is just regular Blazor <code>RenderFragment&lt;TValue&gt;</code> parameter passing, in this case, to the <code>Template</code> parameter. This is the same for both <code>Fixture</code> and <code>SnapshotTest</code> razor tests.</p>
+</section>
+</div>
+<h4 id="passing-html-and-components-based-templates">Passing HTML and Components based templates</h4>
+<p>To pass a template into a <code>RenderFragment&lt;TValue&gt;</code> parameter, which consists of both regular HTML markup and components, in this case, the <code>&lt;Item&gt;</code> component listed below, do the following:</p>
+<pre><code class="lang-csharp" name="Item.razor">&lt;span&gt;@Value&lt;/span&gt;
+@code 
+{
+  [Parameter]
+  public string Value { get; set; }
+}
+</code></pre><div class="tabGroup" id="tabgroup_CeZOj-G++Q-11">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-11_csharp" role="tab" aria-controls="tabpanel_CeZOj-G++Q-11_csharp" data-tab="csharp" tabindex="0" aria-selected="true">C# test code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-11_razor" role="tab" aria-controls="tabpanel_CeZOj-G++Q-11_razor" data-tab="razor" tabindex="-1">Razor test code</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-11_csharp" role="tabpanel" data-tab="csharp">
+<pre><code class="lang-csharp">using var ctx = new TestContext();
+
+// Using factory method
+var cut1 = ctx.RenderComponent&lt;TemplateParams&lt;string&gt;&gt;(
+  (&quot;Items&quot;, new string[] { &quot;Foo&quot;, &quot;Bar&quot;, &quot;Baz&quot; }),
+  Template&lt;string&gt;(&quot;Template&quot;, item =&gt; builder =&gt;
+  {
+    builder.OpenElement(1, &quot;div&quot;);
+    builder.AddAttribute(2, &quot;class&quot;, &quot;item&quot;);
+    builder.OpenComponent&lt;Item&gt;(3);
+    builder.AddAttribute(4, &quot;Value&quot;, item);
+    builder.CloseComponent();
+    builder.CloseElement();
+  })
+);
+
+// Using parameter builder
+var cut2 = ctx.RenderComponent&lt;TemplateParams&lt;string&gt;&gt;(parameters =&gt; parameters
+  .Add(p =&gt; p.Items, new[] { &quot;Foo&quot;, &quot;Bar&quot;, &quot;Baz&quot; })
+  .Add(p =&gt; p.Template, item =&gt; builder =&gt;
+  {
+    builder.OpenElement(1, &quot;div&quot;);
+    builder.AddAttribute(2, &quot;class&quot;, &quot;item&quot;);
+    builder.OpenComponent&lt;Item&gt;(3);
+    builder.AddAttribute(4, &quot;Value&quot;, item);
+    builder.CloseComponent();
+    builder.CloseElement();
+  })
+);
+</code></pre>
+<p>These examples do the same thing, i.e. create a template which consist of a <code>&lt;div&gt;</code> element which wraps the <code>&lt;Item&gt;</code> component listed above. In both cases, must construct the <code>RenderFragemnt&lt;TValue&gt;</code> type manually. Here is what is going on:</p>
+<ol>
+<li>The first example passes data to the <code>Items</code> parameter, and then it uses the <code>Template&lt;TValue&gt;</code> factory method in <a class="xref" href="../../api/Bunit.ComponentParameterFactory.html">ComponentParameterFactory</a>, which takes the name of the <code>RenderFragment&lt;TValue&gt;</code> template parameter and a <code>RenderFragment&lt;TValue&gt;</code> type as input.</li>
+<li>The second example uses the <a class="xref" href="../../api/Bunit.ComponentParameterBuilder-1.html">ComponentParameterBuilder&lt;TComponent&gt;</a>'s <code>Add</code> method to first add the data to <code>Items</code> parameter and then a <code>RenderFragment&lt;TValue&gt;</code> type as input.</li>
+</ol>
+</section>
+<section id="tabpanel_CeZOj-G++Q-11_razor" role="tabpanel" data-tab="razor" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-html">&lt;Fixture Test=&quot;f =&gt; {}&quot;&gt;
+  &lt;ComponentUnderTest&gt;
+    &lt;TemplateParams Items=@(new string[]{ &quot;Foo&quot;, &quot;Bar&quot;, &quot;Baz&quot; }) TItem=&quot;string&quot;&gt;
+      &lt;Template&gt;
+        &lt;div class=&quot;item&quot;&gt;
+          &lt;Item Value=@context&gt;&lt;/Item&gt;
+        &lt;/div&gt;
+      &lt;/Template&gt;
+    &lt;/TemplateParams&gt;
+  &lt;/ComponentUnderTest&gt;
+&lt;/Fixture&gt;
+</code></pre>
+<p>This is just regular Blazor <code>RenderFragment&lt;TValue&gt;</code> parameter passing, in this case, to the <code>Template</code> parameter. This is the same for both <code>Fixture</code> and <code>SnapshotTest</code> razor tests.</p>
+</section>
+</div>
+<h3 id="unmatched-parameters">Unmatched Parameters</h3>
+<p>An unmatched parameter is a parameter passed to a component under test, which does not have an explicit <code>[Parameter]</code> parameter, but instead is captured by a <code>[Parameter(CaptureUnmatchedValues = true)]</code> parameter.</p>
+<p>In the follow examples, we will pass a unmatched parameter to the following component:</p>
+<pre><code class="lang-csharp" name="UnmatchedParams">public class UnmatchedParams : ComponentBase
+{
+  [Parameter(CaptureUnmatchedValues = true)]
+  public Dictionary&lt;string, object&gt; InputAttributes { get; set; }
+}
+</code></pre><div class="tabGroup" id="tabgroup_CeZOj-G++Q-12">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-12_csharp" role="tab" aria-controls="tabpanel_CeZOj-G++Q-12_csharp" data-tab="csharp" tabindex="0" aria-selected="true">C# test code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-12_razor" role="tab" aria-controls="tabpanel_CeZOj-G++Q-12_razor" data-tab="razor" tabindex="-1">Razor test code</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-12_csharp" role="tabpanel" data-tab="csharp">
+<pre><code class="lang-csharp">using var ctx = new TestContext();
+
+// Using factory method
+var cut1 = ctx.RenderComponent&lt;UnmatchedParams&gt;(
+  (&quot;some-unknown-param&quot;, &quot;a value&quot;)
+);
+
+// Using parameter builder
+var cut2 = ctx.RenderComponent&lt;UnmatchedParams&gt;(parameters =&gt; parameters
+  .AddUnmatched(&quot;some-unknown-param&quot;, &quot;a value&quot;)
+);
+</code></pre>
+<p>These examples do the same thing, i.e. pass in the parameter <code>some-unknown-param</code> with the value <code>a value</code> to the component under test.</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q-12_razor" role="tabpanel" data-tab="razor" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-html">&lt;Fixture Test=&quot;f =&gt; {}&quot;&gt;
+  &lt;ComponentUnderTest&gt;
+    &lt;UnmatchedParams some-unknown-param=&quot;a value&quot; /&gt;
+  &lt;/ComponentUnderTest&gt;
+&lt;/Fixture&gt;
+</code></pre>
+<p>This is just regular Blazor parameter passing, which is the same for both <code>Fixture</code> and <code>SnapshotTest</code> razor tests. In this case, the parameter <code>some-unknown-param</code> with the value <code>a value</code> is passed to the component under test.</p>
+</section>
+</div>
+<h2 id="cascading-parameters-and-cascading-values">Cascading Parameters and Cascading Values</h2>
+<p>Cascading parameters are properties with the <code>[CascadingParameter]</code> attribute. There are two variants, <strong>named</strong> and <strong>unnamed</strong> cascading parameters. In Blazor, the <code>&lt;CascadingValue&gt;</code> component is used to provide values to cascading parameters, which we also do in Razor based tests. However, in C# based tests, we need to do it a little differently.</p>
+<p>The following examples will pass cascading values to the <code>&lt;CascadingParams&gt;</code> component listed below:</p>
+<pre><code class="lang-csharp" name="CascadingParams.razor">@code 
+{
+  [CascadingParameter]
+  public bool IsDarkTheme { get; set; }
+
+  [CascadingParameter(Name = &quot;LoggedInUser&quot;)]
+  public string UserName { get; set; }
+    
+  [CascadingParameter(Name = &quot;LoggedInEmail&quot;)]
+  public string Email { get; set; }
+}
+</code></pre><h3 id="passing-unnamed-cascading-values">Passing Unnamed Cascading Values</h3>
+<p>To pass the unnamed <code>IsDarkTheme</code> cascading parameter to the <code>&lt;CascadingParams&gt;</code> component, do the following:</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-13">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-13_csharp" role="tab" aria-controls="tabpanel_CeZOj-G++Q-13_csharp" data-tab="csharp" tabindex="0" aria-selected="true">C# test code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-13_razor" role="tab" aria-controls="tabpanel_CeZOj-G++Q-13_razor" data-tab="razor" tabindex="-1">Razor test code</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-13_csharp" role="tabpanel" data-tab="csharp">
+<pre><code class="lang-csharp">using var ctx = new TestContext();
+var isDarkTheme = true;
+
+// Using factory method
+var cut1 = ctx.RenderComponent&lt;CascadingParams&gt;(
+  CascadingValue(isDarkTheme)
+);
+
+// Using parameter builder
+var cut2 = ctx.RenderComponent&lt;CascadingParams&gt;(parameters =&gt; parameters
+  .Add(isDarkTheme)
+);
+
+// Using parameter builder and selecting unnamed cascading parameter
+var cut3 = ctx.RenderComponent&lt;CascadingParams&gt;(parameters =&gt; parameters
+  .Add(p =&gt; p.IsDarkTheme, isDarkTheme)
+);
+</code></pre>
+<p>These examples do the same thing, i.e. pass in variable <code>isDarkTheme</code> to the cascading parameter <code>IsDarkTheme</code>.</p>
+<ol>
+<li>The first example uses the <code>CascadingValue</code> factory method in <a class="xref" href="../../api/Bunit.ComponentParameterFactory.html">ComponentParameterFactory</a> to pass the unnamed parameter value.</li>
+<li>The second example uses the <code>Add</code> method on the <a class="xref" href="../../api/Bunit.ComponentParameterBuilder-1.html">ComponentParameterBuilder&lt;TComponent&gt;</a> to pass the unnamed parameter value.</li>
+<li>The last example uses the <code>Add</code> method on the <a class="xref" href="../../api/Bunit.ComponentParameterBuilder-1.html">ComponentParameterBuilder&lt;TComponent&gt;</a> with the parameter selector to explicitly select the desired cascading parameter and pass the unnamed parameter value that way.</li>
+</ol>
+</section>
+<section id="tabpanel_CeZOj-G++Q-13_razor" role="tabpanel" data-tab="razor" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-html">&lt;Fixture Test=&quot;f =&gt; {}&quot;&gt;
+  &lt;ComponentUnderTest&gt;
+    &lt;CascadingValue Value=&quot;true&quot;&gt; @* isDarkMode *@
+      &lt;CascadingParams /&gt;
+    &lt;/CascadingValue&gt;
+  &lt;/ComponentUnderTest&gt;
+&lt;/Fixture&gt;
+</code></pre>
+<p>This is just regular Blazor cascading value parameter passing, which is the same for both <code>Fixture</code> and <code>SnapshotTest</code> razor tests. In this case, the <code>&lt;CascadingValue&gt;</code> component is used to pass the unnamed parameter value.</p>
+</section>
+</div>
+<h3 id="passing-named-cascading-values">Passing Named Cascading Values</h3>
+<p>To pass a named cascading parameter to the <code>&lt;CascadingParams&gt;</code> component, do the following:</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-14">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-14_csharp" role="tab" aria-controls="tabpanel_CeZOj-G++Q-14_csharp" data-tab="csharp" tabindex="0" aria-selected="true">C# test code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-14_razor" role="tab" aria-controls="tabpanel_CeZOj-G++Q-14_razor" data-tab="razor" tabindex="-1">Razor test code</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-14_csharp" role="tabpanel" data-tab="csharp">
+<pre><code class="lang-csharp">using var ctx = new TestContext();
+
+// Using factory method
+var cut1 = ctx.RenderComponent&lt;CascadingParams&gt;(
+  CascadingValue(&quot;LoggedInUser&quot;, &quot;Egil Hansen&quot;)
+);
+
+// Using parameter builder
+var cut2 = ctx.RenderComponent&lt;CascadingParams&gt;(parameters =&gt; parameters
+  .Add(p =&gt; p.UserName, &quot;Egil Hansen&quot;)
+);
+</code></pre>
+<p>These examples do the same thing, i.e. pass in value <code>Egil Hansen</code> to the cascading parameter with the name <code>LoggedInUser</code>. Note that the name of the parameter is not the same as the property of the parameter, e.g. <code>LoggedInUser</code> vs. <code>UserName</code>.</p>
+<ol>
+<li>The first example uses the <code>CascadingValue</code> factory method in <a class="xref" href="../../api/Bunit.ComponentParameterFactory.html">ComponentParameterFactory</a> to pass the named parameter value, specifying the cascading parameters name and a value (not the property name).</li>
+<li>The second example uses the <code>Add</code> method on the <a class="xref" href="../../api/Bunit.ComponentParameterBuilder-1.html">ComponentParameterBuilder&lt;TComponent&gt;</a> with the parameter selector to select the cascading parameter property and pass the parameter value that way.</li>
+</ol>
+</section>
+<section id="tabpanel_CeZOj-G++Q-14_razor" role="tabpanel" data-tab="razor" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-html">&lt;Fixture Test=&quot;f =&gt; {}&quot;&gt;
+  &lt;ComponentUnderTest&gt;
+    &lt;CascadingValue Name=&quot;LoggedInUser&quot; Value=@(&quot;Egil Hansen&quot;)&gt;
+      &lt;CascadingParams /&gt;
+    &lt;/CascadingValue&gt;
+  &lt;/ComponentUnderTest&gt;
+&lt;/Fixture&gt;
+</code></pre>
+<p>This is just regular Blazor cascading value parameter passing, which is the same for both <code>Fixture</code> and <code>SnapshotTest</code> razor tests. In this case, the <code>&lt;CascadingValue&gt;</code> component is used to pass a named parameter value, since both the <code>Name</code> and <code>Value</code> parameters are specified.</p>
+</section>
+</div>
+<h3 id="passing-multiple-named-and-unnamed-cascading-values">Passing Multiple, Named and Unnamed, Cascading Values</h3>
+<p>To pass all cascading parameter to the <code>&lt;CascadingParams&gt;</code> component, do the following:</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-15">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-15_csharp" role="tab" aria-controls="tabpanel_CeZOj-G++Q-15_csharp" data-tab="csharp" tabindex="0" aria-selected="true">C# test code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-15_razor" role="tab" aria-controls="tabpanel_CeZOj-G++Q-15_razor" data-tab="razor" tabindex="-1">Razor test code</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-15_csharp" role="tabpanel" data-tab="csharp">
+<pre><code class="lang-csharp">using var ctx = new TestContext();
+var isDarkTheme = true;
+
+// Using factory method
+var cut1 = ctx.RenderComponent&lt;CascadingParams&gt;(
+  CascadingValue(isDarkTheme),
+  CascadingValue(&quot;LoggedInUser&quot;, &quot;Egil Hansen&quot;),
+  CascadingValue(&quot;LoggedInEmail&quot;, &quot;egil@example.com&quot;)
+);
+
+// Using parameter builder
+var cut2 = ctx.RenderComponent&lt;CascadingParams&gt;(parameters =&gt; parameters
+  .Add(isDarkTheme)
+  .Add(p =&gt; p.UserName, &quot;Egil Hansen&quot;)
+  .Add(p =&gt; p.Email, &quot;egil@example.com&quot;)
+);
+
+// Using parameter builder and selecting unnamed cascading parameter
+var cut3 = ctx.RenderComponent&lt;CascadingParams&gt;(parameters =&gt; parameters
+  .Add(p =&gt; p.IsDarkTheme, isDarkTheme)
+  .Add(p =&gt; p.UserName, &quot;Egil Hansen&quot;)
+  .Add(p =&gt; p.Email, &quot;egil@example.com&quot;)
+);
+</code></pre>
+<p>These examples do the same thing, i.e. pass both the unnamed <code>IsDarkTheme</code> cascading parameter, and the two named cascading parameters (<code>LoggedInUser</code>, <code>LoggedInEmail</code>).</p>
+<ol>
+<li>The first example uses the <code>CascadingValue</code> factory method in <a class="xref" href="../../api/Bunit.ComponentParameterFactory.html">ComponentParameterFactory</a> to pass the unnamed and named parameter values.</li>
+<li>The second example uses the <code>Add</code> method on the <a class="xref" href="../../api/Bunit.ComponentParameterBuilder-1.html">ComponentParameterBuilder&lt;TComponent&gt;</a> without a parameter to pass the unnamed parameter value, and <code>Add</code> method with the parameter selector to select each of the named parameters to pass the named parameter values.</li>
+<li>The last example uses the <code>Add</code> method on the <a class="xref" href="../../api/Bunit.ComponentParameterBuilder-1.html">ComponentParameterBuilder&lt;TComponent&gt;</a> with the parameter selector to select both the named and unnamed cascading parameters and pass values to them that way.</li>
+</ol>
+</section>
+<section id="tabpanel_CeZOj-G++Q-15_razor" role="tabpanel" data-tab="razor" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-html">&lt;Fixture Test=&quot;f =&gt; {}&quot;&gt;
+  &lt;ComponentUnderTest&gt;
+    &lt;CascadingValue Value=&quot;true&quot;&gt; @* isDarkMode *@
+      &lt;CascadingValue Name=&quot;LoggedInUser&quot; Value=@(&quot;Egil Hansen&quot;)&gt;
+        &lt;CascadingValue Name=&quot;LoggedInEmail&quot; Value=@(&quot;egil@example.com&quot;)&gt;
+          &lt;CascadingParams /&gt;
+        &lt;/CascadingValue&gt;
+      &lt;/CascadingValue&gt;
+    &lt;/CascadingValue&gt;
+  &lt;/ComponentUnderTest&gt;
+&lt;/Fixture&gt;
+</code></pre>
+<p>This is just regular Blazor cascading value parameter passing, which is the same for both <code>Fixture</code> and <code>SnapshotTest</code> razor tests. In this case, multiple <code>&lt;CascadingValue&gt;</code> components is used to pass the unnamed and named cascading parameter values to the component.</p>
+</section>
+</div>
+<h2 id="render-a-component-under-test-inside-other-components">Render a Component Under Test Inside Other Components</h2>
+<p>It is possible to nest a component under tests inside other components, if that is needed to test it. For example, to nest the <code>&lt;HelloWorld&gt;</code> component inside the <code>&lt;Wrapper&gt;</code> component, do the following:</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-16">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-16_csharp" role="tab" aria-controls="tabpanel_CeZOj-G++Q-16_csharp" data-tab="csharp" tabindex="0" aria-selected="true">C# test code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-16_razor" role="tab" aria-controls="tabpanel_CeZOj-G++Q-16_razor" data-tab="razor" tabindex="-1">Razor test code</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-16_csharp" role="tabpanel" data-tab="csharp">
+<pre><code class="lang-csharp">using var ctx = new TestContext();
+
+// Using C# factory methods
+var wrapper1 = ctx.RenderComponent&lt;Wrapper&gt;(
+  ChildContent&lt;HelloWorld&gt;()
+);
+var cut1 = wrapper1.FindComponent&lt;HelloWorld&gt;();
+
+// Using parameter builder
+var wrapper2 = ctx.RenderComponent&lt;Wrapper&gt;(parameters =&gt; parameters
+  .AddChildContent&lt;HelloWorld&gt;()
+);
+var cut2 = wrapper2.FindComponent&lt;HelloWorld&gt;();
+</code></pre>
+<p>These examples do the same thing, i.e. rendering the <code>&lt;HelloWorld&gt;</code> component inside the <code>&lt;Wrapper&gt;</code> component. What is special in both cases is the use of the <code>FindComponent&lt;HelloWorld&gt;()</code>, which returns a <code>IRenderedComponent&lt;HelloWorld&gt;</code>, which gives access to only the <code>&lt;HelloWorld&gt;</code> components part of the render tree, and the <code>&lt;HelloWorld&gt;</code> components instance.</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q-16_razor" role="tabpanel" data-tab="razor" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-html">&lt;Fixture Test=&quot;HelloWorldTest&quot;&gt;
+  &lt;ComponentUnderTest&gt;
+    &lt;Wrapper&gt;
+      &lt;HelloWorld /&gt;
+    &lt;/Wrapper&gt;
+  &lt;/ComponentUnderTest&gt;
+
+  @code
+  {
+    void HelloWorldTest(Fixture fixture)
+    {
+      var cut = fixture.GetComponentUnderTest&lt;HelloWorld&gt;();
+    }
+  }
+&lt;/Fixture&gt;
+</code></pre>
+<p>This is just regular Blazor child content parameter passing, where one component is rendered inside another, i.e. the <code>&lt;HelloWorld&gt;</code> component inside the <code>&lt;Wrapper&gt;</code> component.</p>
+<p>The special thing in this case is that the <code>GetComponentUnderTest&lt;HelloWorld&gt;()</code> method specifies the <code>&lt;HelloWorld&gt;</code> component as its target instead of the outer <code>&lt;Wrapper&gt;</code> component. This returns a <code>IRenderedComponent&lt;HelloWorld&gt;</code>, which gives access to only the <code>&lt;HelloWorld&gt;</code> components part of the render tree, and the <code>&lt;HelloWorld&gt;</code> components instance.</p>
+</section>
+</div>
+<h2 id="further-reading">Further Reading</h2>
+<ul>
+<li><a class="xref" href="inject-services-into-components.html">Injecting Services into Components Under Test</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/egil/bUnit/blob/main/docs/site/docs/providing-input/passing-parameters-to-components.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            <small>Documentation updated on 7/15/2020 10:04:21 AM +00:00 in commit acbc0e07cf</small>.
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/cshtml-razor.js"></script>
+    <script>
+      hljs.registerLanguage('cshtml-razor', window.hljsDefineCshtmlRazor);
+    </script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

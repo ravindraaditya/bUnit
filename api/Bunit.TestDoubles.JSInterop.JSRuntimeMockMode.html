@@ -1,0 +1,166 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Enum JSRuntimeMockMode
+   | bUnit </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Enum JSRuntimeMockMode
+   | bUnit ">
+    <meta name="generator" content="docfx 2.53.1.0">
+    <meta name="description" content="bUnit is a unit testing library for Blazor Components. You can easily define components under test in C# or Razor syntax and verify outcome using semantic HTML diffing/comparison logic. You can interact with and inspect components, trigger event handlers, provide cascading values, inject services, mock IJsRuntime, and perform snapshot testing.">
+    <!--<link rel="shortcut icon" href="../favicon.ico">-->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img height="60%" id="logo" class="img" src="..//images/blazor-logo.png" alt="bUnit">
+                <span>bUnit</span>
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Bunit.TestDoubles.JSInterop.JSRuntimeMockMode">
+  
+  
+  <h1 id="Bunit_TestDoubles_JSInterop_JSRuntimeMockMode" data-uid="Bunit.TestDoubles.JSInterop.JSRuntimeMockMode" class="text-break">Enum JSRuntimeMockMode
+  </h1>
+  <div class="markdown level0 summary"><p>The execution mode of the <a class="xref" href="Bunit.TestDoubles.JSInterop.MockJSRuntimeExtensions.html">MockJSRuntimeExtensions</a>.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Bunit.TestDoubles.JSInterop.html">Bunit.TestDoubles.JSInterop</a></h6>
+  <h6><strong>Assembly</strong>: Bunit.Web.dll</h6>
+  <h5 id="Bunit_TestDoubles_JSInterop_JSRuntimeMockMode_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public enum JSRuntimeMockMode</code></pre>
+  </div>
+  <h3 id="fields">Fields
+  </h3>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    <thead>
+    <tbody>
+      <tr>
+        <td id="Bunit_TestDoubles_JSInterop_JSRuntimeMockMode_Loose">Loose</td>
+        <td><p><a class="xref" href="Bunit.TestDoubles.JSInterop.JSRuntimeMockMode.html#Bunit_TestDoubles_JSInterop_JSRuntimeMockMode_Loose">Loose</a> configures the <a class="xref" href="Bunit.TestDoubles.JSInterop.MockJSRuntimeExtensions.html">MockJSRuntimeExtensions</a> to return default TValue
+for <span class="xref">Microsoft.JSInterop.IJSRuntime.InvokeAsync``1(System.String,System.Object[])</span> calls to the mock.</p>
+</td>
+      </tr>
+      <tr>
+        <td id="Bunit_TestDoubles_JSInterop_JSRuntimeMockMode_Strict">Strict</td>
+        <td><p><a class="xref" href="Bunit.TestDoubles.JSInterop.JSRuntimeMockMode.html#Bunit_TestDoubles_JSInterop_JSRuntimeMockMode_Strict">Strict</a> configures the <a class="xref" href="Bunit.TestDoubles.JSInterop.MockJSRuntimeExtensions.html">MockJSRuntimeExtensions</a> to throw an
+<a class="xref" href="Bunit.TestDoubles.JSInterop.UnplannedJSInvocationException.html">UnplannedJSInvocationException</a> exception when a call to
+for <span class="xref">Microsoft.JSInterop.IJSRuntime.InvokeAsync``1(System.String,System.Object[])</span> has not been
+setup in the mock.</p>
+</td>
+      </tr>
+    </tbody>
+  </thead></thead></table>
+  <h3 id="extensionmethods">Extension Methods</h3>
+  <div>
+      <a class="xref" href="Bunit.TestDoubles.JSInterop.JSRuntimeAssertExtensions.html#Bunit_TestDoubles_JSInterop_JSRuntimeAssertExtensions_ShouldBeElementReferenceTo_System_Object_AngleSharp_Dom_IElement_">JSRuntimeAssertExtensions.ShouldBeElementReferenceTo(IElement)</a>
+  </div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/egil/bUnit/new/main/apiSpec/new?filename=Bunit_TestDoubles_JSInterop_JSRuntimeMockMode.md&amp;value=---%0Auid%3A%20Bunit.TestDoubles.JSInterop.JSRuntimeMockMode%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/egil/bUnit/blob/main/src/bunit.web/TestDoubles/JSInterop/JSRuntimeMockMode.cs/#L8" class="contribution-link">View Source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            <small>Documentation updated on 7/15/2020 10:04:21 AM +00:00 in commit acbc0e07cf</small>.
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/cshtml-razor.js"></script>
+    <script>
+      hljs.registerLanguage('cshtml-razor', window.hljsDefineCshtmlRazor);
+    </script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
